@@ -29,10 +29,11 @@ async function processImage(fileId: string): Promise<string> {
   return filePath;
 }
 
-bot.onText(/\/createPack/, async (msg) => {
+bot.onText(/^\/createPack$/, async (msg) => {
   if (msg.chat.type === "group" || msg.chat.type === "supergroup") {
     if (!(await isUserAdmin(msg.chat.id, msg.from?.id ?? 0))) {
       bot.sendMessage(msg.chat.id, "Only group admins can use this command");
+      return;
     }
     const id = msg.chat.id.toString().replace("-", "");
     const packName = `s_${id}_by_${BOT_NAME}`;
@@ -42,7 +43,7 @@ bot.onText(/\/createPack/, async (msg) => {
         packName,
         msg.chat.title ?? packName,
         fs.createReadStream("./default.png"),
-        "🔥"
+        "🖼️"
       );
       db.push(`/groups/${id}`, msg.from?.id);
       bot.sendMessage(

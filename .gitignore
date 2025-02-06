@@ -5,3 +5,5 @@ dist/
 sticker.webp
 sticker.png
 database.json
+
+*.zip
