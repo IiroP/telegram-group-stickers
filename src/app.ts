@@ -14,6 +14,7 @@ const BOT_NAME = process.env.BOT_NAME ?? "";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 const db = new JsonDB(new Config("database", true, true, "/"));
+console.log("Started the bot");
 
 async function processImage(fileId: string): Promise<string> {
   const fileLink = await bot.getFileLink(fileId);
