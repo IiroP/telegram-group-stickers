@@ -36,6 +36,6 @@ export const createStickerPack = async (
     fs.createReadStream("./default.png"),
     "🖼️"
   );
-  db.push(`/groups/${trimmedChatId}`, owner);
+  await db.push(`/groups/${trimmedChatId}`, owner);
   return packName;
 };
