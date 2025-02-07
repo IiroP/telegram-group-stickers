@@ -29,7 +29,7 @@ export const createStickerPack = async (
 ): Promise<string> => {
   const trimmedChatId = trimChatID(chatID);
   const packName = stickerPackName(chatID);
-  bot.createNewStickerSet(
+  await bot.createNewStickerSet(
     owner,
     packName,
     title ?? trimmedChatId,

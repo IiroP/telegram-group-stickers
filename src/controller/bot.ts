@@ -12,7 +12,10 @@ export const createPackController = async (
   }
   // Only admin user can create the pack
   if (!(await isUserAdmin(msg.chat.id, msg.from?.id ?? 0, bot))) {
-    bot.sendMessage(msg.chat.id, "Only group admins can use this command");
+    await bot.sendMessage(
+      msg.chat.id,
+      "Only group admins can use this command"
+    );
     return;
   }
 
@@ -24,19 +27,19 @@ export const createPackController = async (
       msg.chat.title,
       msg.chat.id
     );
-    bot.sendMessage(
+    await bot.sendMessage(
       msg.chat.id,
       `Created pack: https://t.me/addstickers/${packName}`
     );
   } catch {
-    bot.sendMessage(msg.chat.id, "Failed to create pack");
+    await bot.sendMessage(msg.chat.id, "Failed to create pack");
     return;
   }
   try {
     // If success, send the new sticker
     const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
     if (newSticker) {
-      bot.sendSticker(msg.chat.id, newSticker.file_id);
+      await bot.sendSticker(msg.chat.id, newSticker.file_id);
     }
   } catch (error) {
     console.error(error);
@@ -70,7 +73,7 @@ export const createStickerController = async (
       await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
       const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
       if (newSticker) {
-        bot.sendSticker(chatId, newSticker.file_id);
+        await bot.sendSticker(chatId, newSticker.file_id);
       }
     } catch (error) {
       console.error(error);
