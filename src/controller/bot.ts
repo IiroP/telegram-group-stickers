@@ -32,10 +32,14 @@ export const createPackController = async (
     bot.sendMessage(msg.chat.id, "Failed to create pack");
     return;
   }
-  // If success, send the new sticker
-  const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
-  if (newSticker) {
-    bot.sendSticker(msg.chat.id, newSticker.file_id);
+  try {
+    // If success, send the new sticker
+    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
+    if (newSticker) {
+      bot.sendSticker(msg.chat.id, newSticker.file_id);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
 

@@ -14,6 +14,7 @@ bot.onText(/^\/createPack$/, async (msg) => {
 });
 
 bot.onText(/\/hello/, (msg) => {
+  bot.getUpdates({ offset: -1 });
   bot.sendMessage(msg.chat.id, "Hello there!");
 });
 
