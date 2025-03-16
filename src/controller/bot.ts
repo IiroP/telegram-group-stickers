@@ -64,7 +64,7 @@ export const createStickerController = async (
 
   const packName = stickerPackName(chatId);
 
-  if (caption.startsWith("#stiku")) {
+  if (caption.indexOf("#stiku") >= 0) {
     const fileId = msg.photo?.pop()?.file_id || msg.sticker?.file_id;
     if (!fileId) return;
 
