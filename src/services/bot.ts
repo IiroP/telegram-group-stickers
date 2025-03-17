@@ -7,7 +7,8 @@ export const createSticker = async (
   bot: TelegramBot,
   fileId: string,
   pack: string,
-  chatID: number
+  chatID: number,
+  emoji: string,
 ) => {
   const stickerPath = await processImage(fileId, bot);
   const trimmedChatId = trimChatID(chatID);
@@ -16,7 +17,7 @@ export const createSticker = async (
     owner,
     pack,
     fs.createReadStream(stickerPath),
-    "🔥",
+    emoji,
     "png_sticker"
   );
 };

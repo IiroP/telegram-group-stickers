@@ -47,6 +47,11 @@ export const processImage = async (
   return filePath;
 };
 
+export const getEmoji = (caption: string[]): string|undefined => {
+  const emojis: string[] = caption.filter((word) => /[\p{Emoji}\u200d]+/gu.test(word)).slice(0, 1);
+  return (emojis.length >= 1) ? emojis.join("") : undefined
+}
+
 /**
  * Generates sticker pack name based on group ID
  *
