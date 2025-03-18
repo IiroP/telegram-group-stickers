@@ -1,10 +1,15 @@
 import TelegramBot from "node-telegram-bot-api";
-import {getEmoji, isGroup, isUserAdmin, stickerPackName} from "../utils/utils";
+import {
+  getEmoji,
+  isGroup,
+  isUserAdmin,
+  stickerPackName,
+} from "../utils/utils";
 import { createSticker, createStickerPack } from "../services/bot";
 
 export const createPackController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot
+  bot: TelegramBot,
 ) => {
   // Only react in groups
   if (!isGroup(msg)) {
@@ -14,7 +19,7 @@ export const createPackController = async (
   if (!(await isUserAdmin(msg.chat.id, msg.from?.id ?? 0, bot))) {
     await bot.sendMessage(
       msg.chat.id,
-      "Only group admins can use this command"
+      "Only group admins can use this command",
     );
     return;
   }
@@ -25,11 +30,11 @@ export const createPackController = async (
       bot,
       msg.from?.id ?? 0,
       msg.chat.title,
-      msg.chat.id
+      msg.chat.id,
     );
     await bot.sendMessage(
       msg.chat.id,
-      `Created pack: https://t.me/addstickers/${packName}`
+      `Created pack: https://t.me/addstickers/${packName}`,
     );
   } catch {
     await bot.sendMessage(msg.chat.id, "Failed to create pack");
@@ -48,7 +53,7 @@ export const createPackController = async (
 
 export const createStickerController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot
+  bot: TelegramBot,
 ) => {
   const chatId = msg.chat.id;
   const userId = msg.from?.id;
@@ -69,7 +74,13 @@ export const createStickerController = async (
     if (!fileId) return;
 
     try {
-      await createSticker(bot, fileId, packName, chatId, getEmoji(caption) ?? "🖼️");
+      await createSticker(
+        bot,
+        fileId,
+        packName,
+        chatId,
+        getEmoji(caption) ?? "🖼️",
+      );
       await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
       const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
       if (newSticker) {
@@ -79,7 +90,7 @@ export const createStickerController = async (
       console.error(error);
       await bot.sendMessage(
         chatId,
-        "❌ Failed to add the sticker. Make sure the bot has permission."
+        "❌ Failed to add the sticker. Make sure the bot has permission.",
       );
     }
   }

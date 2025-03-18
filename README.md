@@ -24,3 +24,7 @@ BOT_NAME=<insert your bot username here>
 
 3. Build the app with `pnpm build`
 4. Run the app with `pnpm start`
+
+## Contributing
+
+Feel free to submit PR:s to this repo. All code should be formatted with `pnpm format`.
