@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { isGroup, isUserAdmin, stickerPackName } from "../utils/utils";
+import {getEmoji, isGroup, isUserAdmin, stickerPackName} from "../utils/utils";
 import { createSticker, createStickerPack } from "../services/bot";
 
 export const createPackController = async (
@@ -52,7 +52,7 @@ export const createStickerController = async (
 ) => {
   const chatId = msg.chat.id;
   const userId = msg.from?.id;
-  const caption = msg.caption?.trim() ?? "";
+  const caption = msg.caption?.split(" ") ?? [];
 
   // User ID must be available
   if (!userId) return;
@@ -64,12 +64,12 @@ export const createStickerController = async (
 
   const packName = stickerPackName(chatId);
 
-  if (caption.startsWith("#stiku")) {
+  if (caption.indexOf("#stiku") >= 0) {
     const fileId = msg.photo?.pop()?.file_id || msg.sticker?.file_id;
     if (!fileId) return;
 
     try {
-      createSticker(bot, fileId, packName, chatId);
+      await createSticker(bot, fileId, packName, chatId, getEmoji(caption) ?? "🖼️");
       await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
       const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
       if (newSticker) {
