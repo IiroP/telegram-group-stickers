@@ -18,7 +18,7 @@ export const createSticker = async (
     pack,
     fs.createReadStream(stickerPath),
     emoji,
-    "png_sticker"
+    "png_sticker",
   );
 };
 
@@ -26,7 +26,7 @@ export const createStickerPack = async (
   bot: TelegramBot,
   owner: number,
   title: string | undefined,
-  chatID: number
+  chatID: number,
 ): Promise<string> => {
   const trimmedChatId = trimChatID(chatID);
   const packName = stickerPackName(chatID);
@@ -35,7 +35,7 @@ export const createStickerPack = async (
     packName,
     title ?? trimmedChatId,
     fs.createReadStream("./default.png"),
-    "🖼️"
+    "🖼️",
   );
   await db.push(`/groups/${trimmedChatId}`, owner);
   return packName;

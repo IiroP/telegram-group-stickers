@@ -15,7 +15,7 @@ import emojiRegex from "emoji-regex";
 export const isUserAdmin = async (
   chatId: number,
   userId: number,
-  bot: TelegramBot
+  bot: TelegramBot,
 ): Promise<boolean> => {
   try {
     const chatMember = await bot.getChatMember(chatId, userId);
@@ -34,7 +34,7 @@ export const isUserAdmin = async (
  */
 export const processImage = async (
   fileId: string,
-  bot: TelegramBot
+  bot: TelegramBot,
 ): Promise<string> => {
   const fileLink = await bot.getFileLink(fileId);
   const response = await axios({ url: fileLink, responseType: "arraybuffer" });
