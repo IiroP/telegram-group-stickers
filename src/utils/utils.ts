@@ -2,6 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import axios from "axios";
 import sharp from "sharp";
 import { BOT_NAME } from "./globals";
+import "emoji-regex";
 
 /**
  * Check if user is admin in selected group
@@ -48,7 +49,10 @@ export const processImage = async (
 };
 
 export const getEmoji = (caption: string[]): string|undefined => {
-  const emojis: string[] = caption.filter((word) => /[\p{Emoji}\u200d]+/gu.test(word)).slice(0, 1);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const emojiRegex = require('emoji-regex');
+  const regex = emojiRegex();
+  const emojis: string[] = caption.filter((word) => regex.test(word)).slice(0, 1);
   return (emojis.length >= 1) ? emojis.join("") : undefined
 }
 
