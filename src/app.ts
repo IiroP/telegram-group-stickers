@@ -3,6 +3,7 @@ import { TOKEN } from "./utils/globals";
 import {
   createPackController,
   createStickerController,
+  textStickerController,
 } from "./controller/bot";
 import { isGroup } from "./utils/utils";
 
@@ -22,6 +23,10 @@ bot.onText(/\/groupID/, (msg) => {
   if (isGroup(msg)) {
     bot.sendMessage(msg.chat.id, `ID is ${msg.chat.id}`);
   }
+});
+
+bot.onText(/^#stiku/, (msg) => {
+  textStickerController(bot, msg);
 });
 
 // Listener for stickers/images
