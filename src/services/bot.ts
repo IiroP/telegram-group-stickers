@@ -3,7 +3,7 @@ import { processImage, stickerPackName, trimChatID } from "../utils/utils";
 import fs from "fs";
 import { db } from "../utils/globals";
 
-export const createSticker = async (
+export const createStickerFromID = async (
   bot: TelegramBot,
   fileId: string,
   pack: string,
@@ -20,6 +20,18 @@ export const createSticker = async (
     emoji,
     "png_sticker",
   );
+};
+
+export const createStickerFromBuffer = async (
+  bot: TelegramBot,
+  buffer: Buffer,
+  pack: string,
+  chatID: number,
+  emoji: string,
+) => {
+  const trimmedChatId = trimChatID(chatID);
+  const owner = await db.getData(`/groups/${trimmedChatId}`);
+  await bot.addStickerToSet(owner, pack, buffer, emoji, "png_sticker");
 };
 
 export const createStickerPack = async (
