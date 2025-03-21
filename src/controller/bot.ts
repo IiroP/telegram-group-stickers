@@ -1,11 +1,17 @@
-import TelegramBot from "node-telegram-bot-api";
+import TelegramBot, { Message } from "node-telegram-bot-api";
 import {
   getEmoji,
+  getProfilePicture,
   isGroup,
   isUserAdmin,
   stickerPackName,
 } from "../utils/utils";
-import { createSticker, createStickerPack } from "../services/bot";
+import {
+  createStickerFromBuffer,
+  createStickerFromID,
+  createStickerPack,
+} from "../services/bot";
+import { createChatBubble } from "../services/chatBubble";
 
 export const createPackController = async (
   msg: TelegramBot.Message,
@@ -74,7 +80,7 @@ export const createStickerController = async (
     if (!fileId) return;
 
     try {
-      await createSticker(
+      await createStickerFromID(
         bot,
         fileId,
         packName,
@@ -95,3 +101,49 @@ export const createStickerController = async (
     }
   }
 };
+
+export const textStickerController = async (
+  bot: TelegramBot,
+  originalMessage: Message,
+) => {
+  const message = originalMessage.reply_to_message;
+  const caption = originalMessage.text?.split(" ") ?? [];
+  if (!message) {
+    console.log(message);
+    return;
+  }
+  const content = message.text;
+  const sender = message.from;
+  if (!content || !sender) {
+    return;
+  }
+  const chatId = originalMessage.chat.id;
+  const packName = stickerPackName(chatId);
+  const name = `${sender.first_name ?? ""} ${sender.last_name ?? ""}`;
+  const time = message.date;
+
+  try {
+    const profilePic = await getProfilePicture(bot, sender.id);
+    const image = await createChatBubble(content, name, time, profilePic);
+    await createStickerFromBuffer(
+      bot,
+      Buffer.from(image),
+      packName,
+      chatId,
+      getEmoji(caption) ?? "🖼️",
+    );
+    await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
+    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
+    if (newSticker) {
+      await bot.sendSticker(chatId, newSticker.file_id);
+    }
+  } catch (error) {
+    console.error(error);
+    await bot.sendMessage(
+      chatId,
+      "❌ Failed to add the sticker. Make sure the bot has permission.",
+    );
+  }
+};
+
+//TODO: Refactor this file as there is a lot of repeated code

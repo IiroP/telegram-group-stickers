@@ -80,3 +80,38 @@ export const trimChatID = (chatID: number): string => {
 export const isGroup = (msg: TelegramBot.Message): boolean => {
   return msg.chat.type == "group" || msg.chat.type === "supergroup";
 };
+
+/**
+ * Parse Telegram message timestamp to HH:MM format
+ *
+ * @param timestamp Telegram message timestamp
+ * @returns time in HH:MM format
+ */
+export const getTime = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
+
+/**
+ * Get profile picture of a user
+ *
+ * @param bot Telegram Bot
+ * @param user user id
+ * @returns ArrayBuffer of the profile picture (or undefined)
+ */
+export const getProfilePicture = async (
+  bot: TelegramBot,
+  user: number,
+): Promise<ArrayBuffer | undefined> => {
+  const file = (await bot.getUserProfilePhotos(user, { limit: 1 })).photos
+    .at(0)
+    ?.at(0);
+  if (!file) {
+    return;
+  }
+  const link = await bot.getFileLink(file.file_id);
+  const response = await axios({ url: link, responseType: "arraybuffer" });
+  return response.data;
+};

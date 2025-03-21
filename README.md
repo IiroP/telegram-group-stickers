@@ -25,6 +25,10 @@ BOT_NAME=<insert your bot username here>
 3. Build the app with `pnpm build`
 4. Run the app with `pnpm start`
 
+## Requirements
+
+If your system is not directly supported by [node-canvas](https://github.com/Automattic/node-canvas), check what system packages you have to install before running this app.
+
 ## Contributing
 
 Feel free to submit PR:s to this repo. All code should be formatted with `pnpm format`.
