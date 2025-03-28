@@ -4,6 +4,7 @@ import {
   getProfilePicture,
   isGroup,
   isUserAdmin,
+  senderInfo,
   stickerPackName,
 } from "../utils/utils";
 import {
@@ -112,18 +113,19 @@ export const textStickerController = async (
     console.log(message);
     return;
   }
+
   const content = message.text;
-  const sender = message.from;
-  if (!content || !sender) {
+  const { senderID, name } = senderInfo(message);
+
+  if (!content || !senderID || !name) {
     return;
   }
   const chatId = originalMessage.chat.id;
   const packName = stickerPackName(chatId);
-  const name = `${sender.first_name ?? ""} ${sender.last_name ?? ""}`;
   const time = message.date;
 
   try {
-    const profilePic = await getProfilePicture(bot, sender.id);
+    const profilePic = await getProfilePicture(bot, senderID);
     const image = await createChatBubble(content, name, time, profilePic);
     await createStickerFromBuffer(
       bot,
