@@ -1,4 +1,4 @@
-import TelegramBot from "node-telegram-bot-api";
+import TelegramBot, { Message } from "node-telegram-bot-api";
 import axios from "axios";
 import sharp from "sharp";
 import { BOT_NAME } from "./globals";
@@ -105,13 +105,44 @@ export const getProfilePicture = async (
   bot: TelegramBot,
   user: number,
 ): Promise<ArrayBuffer | undefined> => {
-  const file = (await bot.getUserProfilePhotos(user, { limit: 1 })).photos
-    .at(0)
-    ?.at(0);
-  if (!file) {
+  try {
+    const chat = await bot.getChat(user);
+    console.log(chat);
+    const fileID = chat.photo?.small_file_id;
+    if (!fileID) {
+      return;
+    }
+    const link = await bot.getFileLink(fileID);
+    const response = await axios({ url: link, responseType: "arraybuffer" });
+    return response.data;
+  } catch {
+    // Bot cannot fetch profile picture of group it's not in
     return;
   }
-  const link = await bot.getFileLink(file.file_id);
-  const response = await axios({ url: link, responseType: "arraybuffer" });
-  return response.data;
+};
+
+export const senderInfo = (
+  message: Message,
+): { senderID?: number; name?: string } => {
+  if (message.forward_from_chat) {
+    // Message forwarded from channel or anonymous group
+    return {
+      senderID: message.forward_from_chat.id,
+      name: message.forward_from_chat.title ?? "Unknown",
+    };
+  } else if (message.forward_from) {
+    // Message forwarded from user
+    return {
+      senderID: message.forward_from.id,
+      name: `${message.forward_from.first_name ?? ""} ${message.forward_from.last_name ?? ""}`,
+    };
+  } else if (!message.from) {
+    // No idea who sent this message
+    return {};
+  }
+  // Message sent by user
+  return {
+    senderID: message.from.id,
+    name: `${message.from.first_name ?? ""} ${message.from.last_name ?? ""}`,
+  };
 };
