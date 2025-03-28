@@ -110,7 +110,6 @@ export const textStickerController = async (
   const message = originalMessage.reply_to_message;
   const caption = originalMessage.text?.split(" ") ?? [];
   if (!message) {
-    console.log(message);
     return;
   }
 
