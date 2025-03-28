@@ -9,6 +9,7 @@ import {
 import { randomAccent } from "../utils/colors";
 import { getTime } from "../utils/utils";
 import { dataUriToBuffer } from "data-uri-to-buffer";
+import sharp from "sharp";
 
 export const createChatBubble = async (
   text: string,
@@ -123,5 +124,8 @@ export const createChatBubble = async (
     format: "png",
     multiplier: 512 / fullWidth,
   });
-  return dataUriToBuffer(data).buffer;
+  return sharp(dataUriToBuffer(data).buffer)
+    .resize(512, 512, { fit: "inside" })
+    .webp({ lossless: true })
+    .toBuffer();
 };

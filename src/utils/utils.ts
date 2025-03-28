@@ -107,7 +107,6 @@ export const getProfilePicture = async (
 ): Promise<ArrayBuffer | undefined> => {
   try {
     const chat = await bot.getChat(user);
-    console.log(chat);
     const fileID = chat.photo?.small_file_id;
     if (!fileID) {
       return;
