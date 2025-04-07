@@ -15,7 +15,6 @@ import {
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
 
-
 export const createPackController = async (
   msg: TelegramBot.Message,
   bot: TelegramBot,
@@ -32,6 +31,7 @@ export const createPackController = async (
     );
     return;
   }
+
   let packName = "";
   try {
     packName = await createStickerPack(
@@ -45,8 +45,7 @@ export const createPackController = async (
       `Created pack: https://t.me/addstickers/${packName}`,
     );
   } catch (error) {
-    console.log(error);
-    console.log(msg.chat.id, msg.from?.id);
+    console.error(error);
     await bot.sendMessage(msg.chat.id, "Failed to create pack");
     return;
   }
