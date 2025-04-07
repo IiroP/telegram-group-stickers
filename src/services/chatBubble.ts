@@ -1,22 +1,20 @@
-import {
-  Circle,
-  FabricImage,
-  FabricText,
-  Rect,
-  StaticCanvas,
-  Textbox,
-} from "fabric/node";
-import { randomAccent } from "../utils/colors";
-import { getTime } from "../utils/utils";
-import { dataUriToBuffer } from "data-uri-to-buffer";
+import {Circle, FabricImage, FabricText, Rect, StaticCanvas, Textbox,} from "fabric/node";
+import {randomAccent} from "../utils/colors";
+import {getTime} from "../utils/utils";
+import {dataUriToBuffer} from "data-uri-to-buffer";
 import sharp from "sharp";
 
 export const createChatBubble = async (
   text: string,
   name: string,
+  admin_title: string | null,
   time: number,
   picture?: ArrayBuffer,
 ) => {
+  console.log("createChatBubble");
+  console.log("createChatBubble", name);
+  console.log("createChatBubble", admin_title);
+  console.log("createChatBubble", text);
   const profilePicRadius = 30;
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
@@ -33,7 +31,6 @@ export const createChatBubble = async (
     fontFamily: fontFamily,
     fontStyle: "bold",
   });
-
   const box = new Textbox(text, {
     left: textBoxStart + 2 * padding,
     top: 4 * padding + nameBox.height,
@@ -62,7 +59,7 @@ export const createChatBubble = async (
     height: bubbleRect.height + 2 * padding,
     backgroundColor: "rgba(0,0,0,0)",
   });
-
+  console.log("canvas", canvas);
   if (picture) {
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;
@@ -75,14 +72,13 @@ export const createChatBubble = async (
       scaleX: scaleFactor,
       scaleY: scaleFactor,
     });
-    const profilePicCircle = new Circle({
+    pic.clipPath = new Circle({
       radius: profilePicRadius / scaleFactor,
       originX: "center",
       originY: "center",
       left: 0,
       top: 0,
     });
-    pic.clipPath = profilePicCircle;
     canvas.add(pic);
   } else {
     // If there is no picture, add a placeholder
@@ -117,8 +113,18 @@ export const createChatBubble = async (
   canvas.add(bubbleRect);
   canvas.add(box);
   canvas.add(nameBox);
+  if (admin_title) {
+    const adminBox = new FabricText(admin_title, {
+      fontSize: 16,
+      fill: accent,
+      top: 2 * padding + nameBox.height,
+      right: 2 * padding,
+      fontFamily: fontFamily,
+    });
+    canvas.add(adminBox);
+  }
   canvas.add(clock);
-
+  console.log("Got Here")
   canvas.renderAll();
   const data = canvas.toDataURL({
     format: "png",

@@ -1,5 +1,6 @@
-import TelegramBot, { Message } from "node-telegram-bot-api";
+import TelegramBot, {ChatMember, Message} from "node-telegram-bot-api";
 import {
+  getAdminTitle,
   getEmoji,
   getProfilePicture,
   isGroup,
@@ -30,7 +31,6 @@ export const createPackController = async (
     );
     return;
   }
-
   let packName = "";
   try {
     packName = await createStickerPack(
@@ -44,7 +44,8 @@ export const createPackController = async (
       `Created pack: https://t.me/addstickers/${packName}`,
     );
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    console.log(msg.chat.id, msg.from?.id);
     await bot.sendMessage(msg.chat.id, "Failed to create pack");
     return;
   }
@@ -123,10 +124,11 @@ export const textStickerController = async (
   const chatId = originalMessage.chat.id;
   const packName = stickerPackName(chatId);
   const time = message.date;
+  const admin_title: string | null = await getAdminTitle(chatId, senderID ?? 0) ?? null;
 
   try {
     const profilePic = await getProfilePicture(bot, senderID);
-    const image = await createChatBubble(content, name, time, profilePic);
+    const image = await createChatBubble(content, name, admin_title, time, profilePic);
     await createStickerFromBuffer(
       bot,
       Buffer.from(image),
