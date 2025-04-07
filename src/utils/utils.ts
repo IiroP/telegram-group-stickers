@@ -116,6 +116,7 @@ export const getProfilePicture = async (
     return response.data;
   } catch {
     // Bot cannot fetch profile picture of group it's not in
+    console.log("Bot cannot fetch profile picture of group it's not in");
     return;
   }
 };

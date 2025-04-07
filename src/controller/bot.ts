@@ -43,7 +43,8 @@ export const createPackController = async (
       msg.chat.id,
       `Created pack: https://t.me/addstickers/${packName}`,
     );
-  } catch {
+  } catch (error) {
+    console.error(error);
     await bot.sendMessage(msg.chat.id, "Failed to create pack");
     return;
   }
