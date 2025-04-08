@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import TelegramBot from "node-telegram-bot-api";
 import { TOKEN } from "./utils/globals";
 import {
@@ -8,10 +10,9 @@ import {
 import { isGroup } from "./utils/utils";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
-console.log("Started the bot");
 
 bot.onText(/^\/createPack$/, async (msg) => {
-  createPackController(msg, bot);
+  await createPackController(msg, bot);
 });
 
 bot.onText(/\/hello/, (msg) => {
@@ -31,5 +32,5 @@ bot.onText(/^#stiku/, (msg) => {
 
 // Listener for stickers/images
 bot.on("photo", async (msg) => {
-  createStickerController(msg, bot);
+  await createStickerController(msg, bot);
 });

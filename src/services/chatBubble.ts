@@ -18,7 +18,7 @@ export const createChatBubble = async (
   const profilePicRadius = 30;
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
-  const fontFamily = "Roboto";
+  const fontFamily = "Noto";
   const fullWidth = text.length > 50 ? 512 : 300;
   const boxWidth = fullWidth - textBoxStart - padding;
   const accent = randomAccent();
@@ -93,6 +93,7 @@ export const createChatBubble = async (
     const letter = name[0].toUpperCase();
     const letterText = new FabricText(letter, {
       fontSize: 24,
+      fontStyle: "bold",
       fill: "white",
       fontFamily: fontFamily,
     });
