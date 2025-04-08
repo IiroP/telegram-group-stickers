@@ -1,4 +1,4 @@
-import TelegramBot, {Message} from "node-telegram-bot-api";
+import TelegramBot, { Message } from "node-telegram-bot-api";
 import {
   getAdminTitle,
   getEmoji,
@@ -124,11 +124,18 @@ export const textStickerController = async (
   const chatId = originalMessage.chat.id;
   const packName = stickerPackName(chatId);
   const time = message.date;
-  const admin_title: string | null = await getAdminTitle(chatId, senderID ?? 0) ?? null;
+  const admin_title: string | null =
+    (await getAdminTitle(chatId, senderID ?? 0)) ?? null;
 
   try {
     const profilePic = await getProfilePicture(bot, senderID);
-    const image = await createChatBubble(content, name, admin_title, time, profilePic);
+    const image = await createChatBubble(
+      content,
+      name,
+      admin_title,
+      time,
+      profilePic,
+    );
     await createStickerFromBuffer(
       bot,
       Buffer.from(image),

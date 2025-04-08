@@ -147,7 +147,10 @@ export const senderInfo = (
   };
 };
 
-export const getAdminTitle = async (chatId: number|string, userId: number): Promise<string|undefined> => {
+export const getAdminTitle = async (
+  chatId: number | string,
+  userId: number,
+): Promise<string | undefined> => {
   try {
     const response = await axios({
       method: "get",
@@ -158,7 +161,7 @@ export const getAdminTitle = async (chatId: number|string, userId: number): Prom
       },
       headers: {
         "Content-Type": "application/json",
-      }
+      },
     });
     if (response.status !== 200) {
       console.error("Error fetching admin title:", response.statusText);
@@ -176,4 +179,4 @@ export const getAdminTitle = async (chatId: number|string, userId: number): Prom
     console.error("Error fetching admin title:", error);
     return;
   }
-}
+};
