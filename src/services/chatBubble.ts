@@ -1,14 +1,7 @@
-import {
-  Circle,
-  FabricImage,
-  FabricText,
-  Rect,
-  StaticCanvas,
-  Textbox,
-} from "fabric/node";
-import { randomAccent } from "../utils/colors";
-import { getTime } from "../utils/utils";
-import { dataUriToBuffer } from "data-uri-to-buffer";
+import {Circle, FabricImage, FabricText, Rect, StaticCanvas, Textbox,} from "fabric/node";
+import {randomAccent} from "../utils/colors";
+import {getTime} from "../utils/utils";
+import {dataUriToBuffer} from "data-uri-to-buffer";
 import sharp from "sharp";
 
 export const createChatBubble = async (
@@ -75,14 +68,13 @@ export const createChatBubble = async (
       scaleX: scaleFactor,
       scaleY: scaleFactor,
     });
-    const profilePicCircle = new Circle({
+    pic.clipPath = new Circle({
       radius: profilePicRadius / scaleFactor,
       originX: "center",
       originY: "center",
       left: 0,
       top: 0,
     });
-    pic.clipPath = profilePicCircle;
     canvas.add(pic);
   } else {
     // If there is no picture, add a placeholder
