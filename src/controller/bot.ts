@@ -9,152 +9,132 @@ import {
   stickerPackName,
 } from "../utils/utils";
 import {
-  createStickerFromBuffer,
-  createStickerFromID,
   createStickerPack,
+  sendStickerSetLastSticker,
+  addStickerBufferAndNotify,
+  addStickerIDAndNotify, logErrorAndNotify,
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
 
 export const createPackController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot,
-) => {
+  bot: TelegramBot
+): Promise<void> => {
   // Only react in groups
-  if (!isGroup(msg)) {
-    return;
-  }
+  if (!isGroup(msg)) return;
+
   // Only admin user can create the pack
-  if (!(await isUserAdmin(msg.chat.id, msg.from?.id ?? 0, bot))) {
-    await bot.sendMessage(
-      msg.chat.id,
-      "Only group admins can use this command",
-    );
+  const userId = msg.from?.id ?? 0;
+  const chatId = msg.chat.id;
+  if (!(await isUserAdmin(chatId, userId, bot))) {
+    await bot.sendMessage(chatId, "Only group admins can use this command");
     return;
   }
 
   let packName = "";
   try {
-    packName = await createStickerPack(
-      bot,
-      msg.from?.id ?? 0,
-      msg.chat.title,
-      msg.chat.id,
-    );
+    packName = await createStickerPack(bot, userId, msg.chat.title, chatId);
     await bot.sendMessage(
-      msg.chat.id,
-      `Created pack: https://t.me/addstickers/${packName}`,
+      chatId,
+      `Created pack: https://t.me/addstickers/${packName}`
     );
   } catch (error) {
     console.error(error);
-    await bot.sendMessage(msg.chat.id, "Failed to create pack");
+    await bot.sendMessage(chatId, "Failed to create pack");
     return;
   }
-  try {
-    // If success, send the new sticker
-    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
-    if (newSticker) {
-      await bot.sendSticker(msg.chat.id, newSticker.file_id);
-    }
-  } catch (error) {
-    console.error(error);
-  }
+
+  // Attempt to send the newly created sticker pack's last sticker
+  await sendStickerSetLastSticker(bot, chatId, packName);
 };
 
 export const createStickerController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot,
-) => {
+  bot: TelegramBot
+): Promise<void> => {
   const chatId = msg.chat.id;
   const userId = msg.from?.id;
-  const caption = msg.caption?.split(" ") ?? [];
+  // Only proceed if we know the user ID and it's a group
+  if (!userId || !isGroup(msg)) return;
 
-  // User ID must be available
-  if (!userId) return;
-
-  // Only react in groups
-  if (!isGroup(msg)) {
-    return;
-  }
-
+  const captionWords = msg.caption?.split(" ") ?? [];
   const packName = stickerPackName(chatId);
 
-  if (caption.indexOf("#stiku") >= 0) {
+  // Check if the #stiku tag is present
+  if (captionWords.includes("#stiku")) {
     const fileId = msg.photo?.pop()?.file_id || msg.sticker?.file_id;
     if (!fileId) return;
 
-    try {
-      await createStickerFromID(
-        bot,
-        fileId,
-        packName,
-        chatId,
-        getEmoji(caption) ?? "🖼️",
-      );
-      await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
-      const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
-      if (newSticker) {
-        await bot.sendSticker(chatId, newSticker.file_id);
-      }
-    } catch (error) {
-      console.error(error);
-      await bot.sendMessage(
-        chatId,
-        "❌ Failed to add the sticker. Make sure the bot has permission.",
-      );
-    }
+    await addStickerIDAndNotify(
+      bot,
+      chatId,
+      packName,
+      fileId,
+      getEmoji(captionWords) ?? "🖼️"
+    );
   }
 };
 
 export const textStickerController = async (
   bot: TelegramBot,
-  originalMessage: Message,
-) => {
+  originalMessage: Message
+): Promise<void> => {
+  // We work off the message being replied to
   const message = originalMessage.reply_to_message;
-  const caption = originalMessage.text?.split(" ") ?? [];
-  if (!message) {
+  if (!message) return;
+
+  // If the replied-to message has a photo/sticker, treat it similarly
+  // to the createStickerController logic:
+  if (message.photo) {
+    const chatId = message.chat.id;
+    if (!isGroup(message)) return;
+
+    const captionWords = message.caption?.split(" ") ?? [];
+    const packName = stickerPackName(chatId);
+    const fileId = message.photo?.pop()?.file_id || message.sticker?.file_id;
+    if (!fileId) return;
+
+    await addStickerIDAndNotify(
+      bot,
+      chatId,
+      packName,
+      fileId,
+      getEmoji(captionWords) ?? "🖼️"
+    );
     return;
   }
 
-  const content = message.text;
+  // Otherwise, we assume it's text and attempt to create a chat bubble
   const { senderID, name } = senderInfo(message);
+  const content = message.text;
+  if (!content || !senderID || !name) return;
 
-  if (!content || !senderID || !name) {
-    return;
-  }
   const chatId = originalMessage.chat.id;
   const packName = stickerPackName(chatId);
   const time = message.date;
-  const admin_title: string | null =
-    (await getAdminTitle(chatId, senderID ?? 0)) ?? null;
+  const adminTitle = await getAdminTitle(chatId, senderID);
 
   try {
     const profilePic = await getProfilePicture(bot, senderID);
+    // Create an image from a "chat bubble"
     const image = await createChatBubble(
       content,
       name,
-      admin_title,
+      adminTitle ?? null,
       time,
-      profilePic,
+      profilePic
     );
-    await createStickerFromBuffer(
+
+    const originalMessageWords = originalMessage.text?.split(" ") ?? [];
+    await addStickerBufferAndNotify(
       bot,
-      Buffer.from(image),
-      packName,
       chatId,
-      getEmoji(caption) ?? "🖼️",
+      packName,
+      Buffer.from(image),
+      getEmoji(originalMessageWords) ?? "🖼️"
     );
-    await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
-    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
-    if (newSticker) {
-      await bot.sendSticker(chatId, newSticker.file_id);
-    }
   } catch (error) {
     console.error(error);
-    await bot.sendMessage(
-      chatId,
-      "❌ Failed to add the sticker. Make sure the bot has permission.",
-    );
+    await logErrorAndNotify(bot, error, chatId);
   }
 };
-
-//TODO: Refactor this file as there is a lot of repeated code
