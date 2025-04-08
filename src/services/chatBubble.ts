@@ -11,11 +11,7 @@ export const createChatBubble = async (
   time: number,
   picture?: ArrayBuffer,
 ) => {
-  console.log("createChatBubble");
-  console.log("createChatBubble", name);
-  console.log("createChatBubble", admin_title);
-  console.log("createChatBubble", text);
-  const profilePicRadius = 30;
+  const profilePicRadius = 20;
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
   const fontFamily = "Noto";
@@ -24,7 +20,7 @@ export const createChatBubble = async (
   const accent = randomAccent();
 
   const nameBox = new FabricText(name, {
-    fontSize: 18,
+    fontSize: 16,
     fill: accent,
     top: 3 * padding,
     left: textBoxStart + 2 * padding,
@@ -59,7 +55,6 @@ export const createChatBubble = async (
     height: bubbleRect.height + 2 * padding,
     backgroundColor: "rgba(0,0,0,0)",
   });
-  console.log("canvas", canvas);
   if (picture) {
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;
@@ -80,6 +75,7 @@ export const createChatBubble = async (
       top: 0,
     });
     canvas.add(pic);
+
   } else {
     // If there is no picture, add a placeholder
     const circle = new Circle({
@@ -104,7 +100,7 @@ export const createChatBubble = async (
   }
 
   const clock = new FabricText(getTime(time), {
-    fontSize: 16,
+    fontSize: 12,
     fill: "grey",
     fontFamily: fontFamily,
     top: totalHeight - 2 * padding - 18,
@@ -113,19 +109,21 @@ export const createChatBubble = async (
 
   canvas.add(bubbleRect);
   canvas.add(box);
-  canvas.add(nameBox);
   if (admin_title) {
     const adminBox = new FabricText(admin_title, {
-      fontSize: 16,
-      fill: accent,
-      top: 2 * padding + nameBox.height,
-      right: 2 * padding,
+      fontSize: 13,
+      textAlign: "right",
+      fill: "grey",
       fontFamily: fontFamily,
+    });
+    adminBox.set({
+      left: fullWidth - adminBox.width - 3 * padding,
+      top: 3.4 * padding,
     });
     canvas.add(adminBox);
   }
+  canvas.add(nameBox);
   canvas.add(clock);
-  console.log("Got Here")
   canvas.renderAll();
   const data = canvas.toDataURL({
     format: "png",

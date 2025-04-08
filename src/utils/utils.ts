@@ -149,8 +149,6 @@ export const senderInfo = (
 
 export const getAdminTitle = async (chatId: number|string, userId: number): Promise<string|undefined> => {
   try {
-    const url = `https://api.telegram.org/bot${TOKEN}/getChatMember`;
-    console.log("URL:", url);
     const response = await axios({
       method: "get",
       url: `https://api.telegram.org/bot${TOKEN}/getChatMember`,
@@ -162,23 +160,20 @@ export const getAdminTitle = async (chatId: number|string, userId: number): Prom
         "Content-Type": "application/json",
       }
     });
-    console.log("Response:", response.data);
+    if (response.status !== 200) {
+      console.error("Error fetching admin title:", response.statusText);
+      return;
+    }
     const data = response.data;
     if (data.result) {
-      console.log("Result:", data.result);
-      if (!data.result.custom_title) {
-        return;
-      }
-      if (data.result.status === "administrator" || data.result.status === "creator") {
+      if (data.result.custom_title) {
         const title = data.result.custom_title;
         return title ? title : undefined;
       }
     }
+    return;
   } catch (error) {
     console.error("Error fetching admin title:", error);
-    console.log(process.env.BOT_TOKEN);
-    console.log(chatId);
-    console.log(userId);
     return;
   }
 }
