@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 dotenv.config();
 import TelegramBot from "node-telegram-bot-api";
 import { TOKEN } from "./utils/globals";
@@ -10,6 +10,7 @@ import {
 import { isGroup } from "./utils/utils";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
+console.log("Started the bot");
 
 bot.onText(/^\/createPack$/, async (msg) => {
   await createPackController(msg, bot);
