@@ -1,4 +1,4 @@
-import TelegramBot, {ChatMember, Message} from "node-telegram-bot-api";
+import TelegramBot, {Message} from "node-telegram-bot-api";
 import {
   getAdminTitle,
   getEmoji,
@@ -14,6 +14,7 @@ import {
   createStickerPack,
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
+
 
 export const createPackController = async (
   msg: TelegramBot.Message,

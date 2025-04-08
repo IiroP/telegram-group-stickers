@@ -20,6 +20,7 @@ export const createStickerFromID = async (
     emoji,
     "png_sticker",
   );
+  fs.unlinkSync(stickerPath);
 };
 
 export const createStickerFromBuffer = async (
