@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
 import TelegramBot from "node-telegram-bot-api";
 import { TOKEN } from "./utils/globals";
