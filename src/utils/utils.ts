@@ -1,7 +1,7 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
 import axios from "axios";
 import sharp from "sharp";
-import { BOT_NAME } from "./globals";
+import { TOKEN, BOT_NAME } from "./globals";
 import emojiRegex from "emoji-regex";
 
 /**
@@ -145,4 +145,38 @@ export const senderInfo = (
     senderID: message.from.id,
     name: `${message.from.first_name ?? ""} ${message.from.last_name ?? ""}`,
   };
+};
+
+export const getAdminTitle = async (
+  chatId: number | string,
+  userId: number,
+): Promise<string | undefined> => {
+  try {
+    const response = await axios({
+      method: "get",
+      url: `https://api.telegram.org/bot${TOKEN}/getChatMember`,
+      data: {
+        chat_id: chatId,
+        user_id: userId,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status !== 200) {
+      console.error("Error fetching admin title:", response.statusText);
+      return;
+    }
+    const data = response.data;
+    if (data.result) {
+      if (data.result.custom_title) {
+        const title = data.result.custom_title;
+        return title ? title : undefined;
+      }
+    }
+    return;
+  } catch (error) {
+    console.error("Error fetching admin title:", error);
+    return;
+  }
 };

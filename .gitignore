@@ -1,6 +1,7 @@
 .env
 node_modules/
 dist/
+.idea
 
 sticker.webp
 sticker.png

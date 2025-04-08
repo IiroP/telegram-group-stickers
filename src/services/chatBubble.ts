@@ -14,26 +14,26 @@ import sharp from "sharp";
 export const createChatBubble = async (
   text: string,
   name: string,
+  admin_title: string | null,
   time: number,
   picture?: ArrayBuffer,
 ) => {
-  const profilePicRadius = 30;
+  const profilePicRadius = 20;
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
-  const fontFamily = "Roboto";
+  const fontFamily = "Noto";
   const fullWidth = text.length > 50 ? 512 : 300;
   const boxWidth = fullWidth - textBoxStart - padding;
   const accent = randomAccent();
 
   const nameBox = new FabricText(name, {
-    fontSize: 18,
+    fontSize: 16,
     fill: accent,
     top: 3 * padding,
     left: textBoxStart + 2 * padding,
     fontFamily: fontFamily,
     fontStyle: "bold",
   });
-
   const box = new Textbox(text, {
     left: textBoxStart + 2 * padding,
     top: 4 * padding + nameBox.height,
@@ -62,7 +62,6 @@ export const createChatBubble = async (
     height: bubbleRect.height + 2 * padding,
     backgroundColor: "rgba(0,0,0,0)",
   });
-
   if (picture) {
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;
@@ -75,14 +74,13 @@ export const createChatBubble = async (
       scaleX: scaleFactor,
       scaleY: scaleFactor,
     });
-    const profilePicCircle = new Circle({
+    pic.clipPath = new Circle({
       radius: profilePicRadius / scaleFactor,
       originX: "center",
       originY: "center",
       left: 0,
       top: 0,
     });
-    pic.clipPath = profilePicCircle;
     canvas.add(pic);
   } else {
     // If there is no picture, add a placeholder
@@ -96,6 +94,7 @@ export const createChatBubble = async (
     const letter = name[0].toUpperCase();
     const letterText = new FabricText(letter, {
       fontSize: 24,
+      fontStyle: "bold",
       fill: "white",
       fontFamily: fontFamily,
     });
@@ -107,7 +106,7 @@ export const createChatBubble = async (
   }
 
   const clock = new FabricText(getTime(time), {
-    fontSize: 16,
+    fontSize: 12,
     fill: "grey",
     fontFamily: fontFamily,
     top: totalHeight - 2 * padding - 18,
@@ -116,9 +115,21 @@ export const createChatBubble = async (
 
   canvas.add(bubbleRect);
   canvas.add(box);
+  if (admin_title) {
+    const adminBox = new FabricText(admin_title, {
+      fontSize: 13,
+      textAlign: "right",
+      fill: "grey",
+      fontFamily: fontFamily,
+    });
+    adminBox.set({
+      left: fullWidth - adminBox.width - 3 * padding,
+      top: 3.4 * padding,
+    });
+    canvas.add(adminBox);
+  }
   canvas.add(nameBox);
   canvas.add(clock);
-
   canvas.renderAll();
   const data = canvas.toDataURL({
     format: "png",
