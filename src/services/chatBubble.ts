@@ -59,6 +59,7 @@ export const createChatBubble = async (
     height: bubbleRect.height + 2 * padding,
     backgroundColor: "rgba(0,0,0,0)",
   });
+  console.log(picture)
   if (picture) {
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;
