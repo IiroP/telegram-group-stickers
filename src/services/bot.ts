@@ -56,7 +56,7 @@ export const createStickerPack = async (
 export const sendStickerSetLastSticker = async (
   bot: TelegramBot,
   chatId: number,
-  packName: string
+  packName: string,
 ): Promise<void> => {
   try {
     const stickerSet = await bot.getStickerSet(packName);
@@ -67,7 +67,7 @@ export const sendStickerSetLastSticker = async (
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 /**
  * Helper that adds a sticker (by file ID) to a given pack, notifies the user,
@@ -78,7 +78,7 @@ export const addStickerIDAndNotify = async (
   chatId: number,
   packName: string,
   fileId: string,
-  emoji: string
+  emoji: string,
 ): Promise<void> => {
   try {
     await createStickerFromID(bot, fileId, packName, chatId, emoji);
@@ -88,7 +88,7 @@ export const addStickerIDAndNotify = async (
     console.error(error);
     await logErrorAndNotify(bot, error, chatId);
   }
-}
+};
 
 /**
  * Helper that adds a sticker (from a Buffer) to a given pack, notifies the user,
@@ -99,7 +99,7 @@ export const addStickerBufferAndNotify = async (
   chatId: number,
   packName: string,
   buffer: Buffer,
-  emoji: string
+  emoji: string,
 ): Promise<void> => {
   try {
     await createStickerFromBuffer(bot, buffer, packName, chatId, emoji);
@@ -108,7 +108,7 @@ export const addStickerBufferAndNotify = async (
   } catch (error) {
     await logErrorAndNotify(bot, error, chatId);
   }
-}
+};
 export const logErrorAndNotify = async (
   bot: TelegramBot,
   error: unknown,
@@ -117,6 +117,6 @@ export const logErrorAndNotify = async (
   console.error(error);
   await bot.sendMessage(
     chatId,
-    "❌ Failed to add the sticker. Make sure the bot has permission."
+    "❌ Failed to add the sticker. Make sure the bot has permission.",
   );
-}
+};

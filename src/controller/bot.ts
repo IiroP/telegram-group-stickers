@@ -12,13 +12,14 @@ import {
   createStickerPack,
   sendStickerSetLastSticker,
   addStickerBufferAndNotify,
-  addStickerIDAndNotify, logErrorAndNotify,
+  addStickerIDAndNotify,
+  logErrorAndNotify,
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
 
 export const createPackController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot
+  bot: TelegramBot,
 ): Promise<void> => {
   // Only react in groups
   if (!isGroup(msg)) return;
@@ -36,7 +37,7 @@ export const createPackController = async (
     packName = await createStickerPack(bot, userId, msg.chat.title, chatId);
     await bot.sendMessage(
       chatId,
-      `Created pack: https://t.me/addstickers/${packName}`
+      `Created pack: https://t.me/addstickers/${packName}`,
     );
   } catch (error) {
     console.error(error);
@@ -50,7 +51,7 @@ export const createPackController = async (
 
 export const createStickerController = async (
   msg: TelegramBot.Message,
-  bot: TelegramBot
+  bot: TelegramBot,
 ): Promise<void> => {
   const chatId = msg.chat.id;
   const userId = msg.from?.id;
@@ -70,14 +71,14 @@ export const createStickerController = async (
       chatId,
       packName,
       fileId,
-      getEmoji(captionWords) ?? "🖼️"
+      getEmoji(captionWords) ?? "🖼️",
     );
   }
 };
 
 export const textStickerController = async (
   bot: TelegramBot,
-  originalMessage: Message
+  originalMessage: Message,
 ): Promise<void> => {
   // We work off the message being replied to
   const message = originalMessage.reply_to_message;
@@ -99,7 +100,7 @@ export const textStickerController = async (
       chatId,
       packName,
       fileId,
-      getEmoji(captionWords) ?? "🖼️"
+      getEmoji(captionWords) ?? "🖼️",
     );
     return;
   }
@@ -122,7 +123,7 @@ export const textStickerController = async (
       name,
       adminTitle ?? null,
       time,
-      profilePic
+      profilePic,
     );
 
     const originalMessageWords = originalMessage.text?.split(" ") ?? [];
@@ -131,7 +132,7 @@ export const textStickerController = async (
       chatId,
       packName,
       Buffer.from(image),
-      getEmoji(originalMessageWords) ?? "🖼️"
+      getEmoji(originalMessageWords) ?? "🖼️",
     );
   } catch (error) {
     console.error(error);
