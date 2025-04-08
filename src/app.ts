@@ -10,6 +10,7 @@ import {
 import { isGroup } from "./utils/utils";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
+console.log("Started the bot");
 
 bot.onText(/^\/createPack$/, async (msg) => {
   await createPackController(msg, bot);
