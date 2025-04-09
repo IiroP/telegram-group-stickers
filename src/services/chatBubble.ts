@@ -93,7 +93,7 @@ export const createChatBubble = async (
       top: totalHeight - padding - 2 * profilePicRadius,
     });
     canvas.add(circle);
-    const letter = name[0].toUpperCase();
+    const letter = Array.from(name)[0].toUpperCase();
     const letterText = new FabricText(letter, {
       fontSize: 24,
       fill: "white",

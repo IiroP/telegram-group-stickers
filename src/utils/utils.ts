@@ -136,6 +136,11 @@ export const senderInfo = (
       senderID: message.forward_from.id,
       name: `${message.forward_from.first_name ?? ""} ${message.forward_from.last_name ?? ""}`,
     };
+  } else if (message.forward_origin) {
+    // Forwarded from hidden user
+    return {
+      name: message.forward_origin.sender_user_name,
+    };
   } else if (!message.from) {
     // No idea who sent this message
     return {};

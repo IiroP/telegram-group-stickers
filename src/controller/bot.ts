@@ -117,7 +117,7 @@ export const textStickerController = async (
   const content = message.text;
   const { senderID, name } = senderInfo(message);
 
-  if (!content || !senderID || !name) {
+  if (!content || !name) {
     return;
   }
   const chatId = originalMessage.chat.id;
@@ -125,7 +125,9 @@ export const textStickerController = async (
   const time = message.date;
 
   try {
-    const profilePic = await getProfilePicture(bot, senderID);
+    const profilePic = senderID
+      ? await getProfilePicture(bot, senderID)
+      : undefined;
     const image = await createChatBubble(content, name, time, profilePic);
     await createStickerFromBuffer(
       bot,
