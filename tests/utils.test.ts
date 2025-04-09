@@ -5,17 +5,22 @@ import { getEmoji } from "../src/utils/utils";
 describe("getEmoji", () => {
   test("correctly extracts first emoji", () => {
     const caption = ["Hello", "👋", "🤔", "world"];
-    assert.strictEqual(getEmoji(caption), "👋");
+    assert.deepStrictEqual(getEmoji(caption), ["👋"]);
   });
 
   test("works with ZWJ sequences", () => {
     const caption = ["test", "👩🏾‍💻"];
-    assert.strictEqual(getEmoji(caption), "👩🏾‍💻");
+    assert.deepStrictEqual(getEmoji(caption), ["👩🏾‍💻"]);
   });
 
   test("ignores other characters", () => {
     const caption = ["#stiku", "#", "1", "emoji", "🤔"];
-    assert.strictEqual(getEmoji(caption), "🤔");
+    assert.deepStrictEqual(getEmoji(caption), ["🤔"]);
+  });
+
+  test("support multiple consecutive emojis", () => {
+    const caption = ["test", "👋🤔", "😄"];
+    assert.deepStrictEqual(getEmoji(caption), ["👋🤔"]);
   });
 
   test("returns undefined if no emoji", () => {

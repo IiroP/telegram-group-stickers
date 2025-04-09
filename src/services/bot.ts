@@ -1,54 +1,55 @@
-import TelegramBot from "node-telegram-bot-api";
 import { processImage, stickerPackName, trimChatID } from "../utils/utils";
-import fs from "fs";
 import { db } from "../utils/globals";
+import { Api, Context, InputFile } from "grammy";
 
 export const createStickerFromID = async (
-  bot: TelegramBot,
+  api: Api,
   fileId: string,
   pack: string,
   chatID: number,
-  emoji: string,
+  emojis: string[],
 ) => {
-  const stickerPath = await processImage(fileId, bot);
+  const stickerPath = await processImage(fileId, api);
   const trimmedChatId = trimChatID(chatID);
   const owner = await db.getData(`/groups/${trimmedChatId}`);
-  await bot.addStickerToSet(
-    owner,
-    pack,
-    fs.createReadStream(stickerPath),
-    emoji,
-    "png_sticker",
-  );
+  await api.addStickerToSet(owner, pack, {
+    sticker: new InputFile(stickerPath),
+    emoji_list: emojis,
+    format: "static",
+  });
 };
 
 export const createStickerFromBuffer = async (
-  bot: TelegramBot,
+  api: Api,
   buffer: Buffer,
   pack: string,
   chatID: number,
-  emoji: string,
+  emojis: string[],
 ) => {
   const trimmedChatId = trimChatID(chatID);
   const owner = await db.getData(`/groups/${trimmedChatId}`);
-  await bot.addStickerToSet(owner, pack, buffer, emoji, "png_sticker");
+  await api.addStickerToSet(owner, pack, {
+    sticker: new InputFile(buffer),
+    emoji_list: emojis,
+    format: "static",
+  });
 };
 
 export const createStickerPack = async (
-  bot: TelegramBot,
+  ctx: Context,
   owner: number,
   title: string | undefined,
   chatID: number,
 ): Promise<string> => {
   const trimmedChatId = trimChatID(chatID);
   const packName = stickerPackName(chatID);
-  await bot.createNewStickerSet(
-    owner,
-    packName,
-    title ?? trimmedChatId,
-    fs.createReadStream("./default.png"),
-    "🖼️",
-  );
+  await ctx.api.createNewStickerSet(owner, packName, title ?? trimmedChatId, [
+    {
+      sticker: new InputFile("./default.png"),
+      format: "static",
+      emoji_list: ["🖼️"],
+    },
+  ]);
   await db.push(`/groups/${trimmedChatId}`, owner);
   return packName;
 };

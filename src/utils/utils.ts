@@ -1,8 +1,9 @@
-import TelegramBot, { Message } from "node-telegram-bot-api";
 import axios from "axios";
 import sharp from "sharp";
-import { BOT_NAME } from "./globals";
+import { BOT_NAME, TOKEN } from "./globals";
 import emojiRegex from "emoji-regex";
+import { File, Message } from "grammy/types";
+import { Api, Context } from "grammy";
 
 /**
  * Check if user is admin in selected group
@@ -15,10 +16,10 @@ import emojiRegex from "emoji-regex";
 export const isUserAdmin = async (
   chatId: number,
   userId: number,
-  bot: TelegramBot,
+  ctx: Context,
 ): Promise<boolean> => {
   try {
-    const chatMember = await bot.getChatMember(chatId, userId);
+    const chatMember = await ctx.getChatMember(userId);
     return ["administrator", "creator"].includes(chatMember.status);
   } catch (error) {
     console.error("Error checking admin status:", error);
@@ -34,9 +35,9 @@ export const isUserAdmin = async (
  */
 export const processImage = async (
   fileId: string,
-  bot: TelegramBot,
+  api: Api,
 ): Promise<string> => {
-  const fileLink = await bot.getFileLink(fileId);
+  const fileLink = getFileLink(await api.getFile(fileId));
   const response = await axios({ url: fileLink, responseType: "arraybuffer" });
   const filePath = `./sticker.webp`;
 
@@ -48,12 +49,12 @@ export const processImage = async (
   return filePath;
 };
 
-export const getEmoji = (caption: string[]): string | undefined => {
+export const getEmoji = (caption: string[]): string[] | undefined => {
   const regex = emojiRegex();
   const emojis: string[] = caption
     .filter((word) => regex.test(word))
     .slice(0, 1);
-  return emojis.length >= 1 ? emojis.join("") : undefined;
+  return emojis.length >= 1 ? emojis : undefined;
 };
 
 /**
@@ -77,7 +78,7 @@ export const trimChatID = (chatID: number): string => {
   return chatID.toString().replace("-", "");
 };
 
-export const isGroup = (msg: TelegramBot.Message): boolean => {
+export const isGroup = (msg: Message): boolean => {
   return msg.chat.type == "group" || msg.chat.type === "supergroup";
 };
 
@@ -94,6 +95,13 @@ export const getTime = (timestamp: number) => {
   return `${hours}:${minutes}`;
 };
 
+export const getFileLink = (file: File): string => {
+  if (file.file_path) {
+    return `https://api.telegram.org/file/bot${TOKEN}/${file.file_path}`;
+  }
+  return "";
+};
+
 /**
  * Get profile picture of a user
  *
@@ -102,16 +110,16 @@ export const getTime = (timestamp: number) => {
  * @returns ArrayBuffer of the profile picture (or undefined)
  */
 export const getProfilePicture = async (
-  bot: TelegramBot,
+  api: Api,
   user: number,
 ): Promise<ArrayBuffer | undefined> => {
   try {
-    const chat = await bot.getChat(user);
+    const chat = await api.getChat(user);
     const fileID = chat.photo?.small_file_id;
     if (!fileID) {
       return;
     }
-    const link = await bot.getFileLink(fileID);
+    const link = getFileLink(await api.getFile(fileID));
     const response = await axios({ url: link, responseType: "arraybuffer" });
     return response.data;
   } catch {
@@ -124,30 +132,38 @@ export const getProfilePicture = async (
 export const senderInfo = (
   message: Message,
 ): { senderID?: number; name?: string } => {
-  if (message.forward_from_chat) {
-    // Message forwarded from channel or anonymous group
-    return {
-      senderID: message.forward_from_chat.id,
-      name: message.forward_from_chat.title ?? "Unknown",
-    };
-  } else if (message.forward_from) {
-    // Message forwarded from user
-    return {
-      senderID: message.forward_from.id,
-      name: `${message.forward_from.first_name ?? ""} ${message.forward_from.last_name ?? ""}`,
-    };
-  } else if (message.forward_origin) {
-    // Forwarded from hidden user
-    return {
-      name: message.forward_origin.sender_user_name,
-    };
-  } else if (!message.from) {
-    // No idea who sent this message
-    return {};
+  // Check if message is forwarded
+  const forward = message.forward_origin;
+  if (forward) {
+    switch (forward.type) {
+      case "user":
+        // Forwarded from user
+        return {
+          senderID: forward.sender_user.id,
+          name: `${forward.sender_user.first_name ?? ""} ${forward.sender_user.last_name ?? ""}`,
+        };
+      case "chat":
+        // Forwarded from chat
+        return {
+          senderID: forward.sender_chat.id,
+          name: forward.sender_chat.title ?? "Unknown",
+        };
+      case "channel":
+        // Forwarded from channel
+        return {
+          senderID: forward.chat.id,
+          name: forward.chat.title ?? "Unknown",
+        };
+      case "hidden_user":
+        // Forwarded from hidden user
+        return {
+          name: forward.sender_user_name,
+        };
+    }
   }
   // Message sent by user
   return {
-    senderID: message.from.id,
-    name: `${message.from.first_name ?? ""} ${message.from.last_name ?? ""}`,
+    senderID: message.from?.id,
+    name: `${message.from?.first_name ?? ""} ${message.from?.last_name ?? ""}`,
   };
 };
