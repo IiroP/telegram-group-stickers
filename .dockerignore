@@ -1,0 +1,13 @@
+.env
+node_modules/
+dist/
+.github
+tests
+.idea
+
+sticker.webp
+sticker.png
+database.json
+*.zip
+
+Dockerfile

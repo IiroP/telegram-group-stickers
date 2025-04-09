@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: telegram-group-stickers
+    command: pnpm start
+    env_file:
+      - .env
+    volumes:
+      - ./database.json:/app/database.json

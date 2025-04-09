@@ -25,6 +25,10 @@ BOT_NAME=<insert your bot username here>
 3. Build the app with `pnpm build`
 4. Run the app with `pnpm start`
 
+### Docker
+
+You can also use Docker to run the application, build with `docker compose build` and run with `docker compose up`
+
 ## Requirements
 
 If your system is not directly supported by [node-canvas](https://github.com/Automattic/node-canvas), check what system packages you have to install before running this app.
