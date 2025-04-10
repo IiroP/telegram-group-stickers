@@ -1,4 +1,3 @@
-import TelegramBot, { Message } from "node-telegram-bot-api";
 import {
   getEmoji,
   getProfilePicture,
@@ -13,62 +12,52 @@ import {
   createStickerPack,
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
+import { Context } from "grammy";
 
-export const createPackController = async (
-  msg: TelegramBot.Message,
-  bot: TelegramBot,
-) => {
+export const createPackController = async (ctx: Context) => {
+  const msg = ctx.message;
   // Only react in groups
-  if (!isGroup(msg)) {
+  if (!msg || !isGroup(msg)) {
     return;
   }
   // Only admin user can create the pack
-  if (!(await isUserAdmin(msg.chat.id, msg.from?.id ?? 0, bot))) {
-    await bot.sendMessage(
-      msg.chat.id,
-      "Only group admins can use this command",
-    );
+  if (!(await isUserAdmin(msg.chat.id, msg.from.id, ctx))) {
+    await ctx.reply("Only group admins can use this command");
     return;
   }
 
   let packName = "";
   try {
     packName = await createStickerPack(
-      bot,
+      ctx,
       msg.from?.id ?? 0,
       msg.chat.title,
       msg.chat.id,
     );
-    await bot.sendMessage(
-      msg.chat.id,
-      `Created pack: https://t.me/addstickers/${packName}`,
-    );
+    await ctx.reply(`Created pack: https://t.me/addstickers/${packName}`);
   } catch (error) {
     console.error(error);
-    await bot.sendMessage(msg.chat.id, "Failed to create pack");
+    await ctx.reply("Failed to create pack");
     return;
   }
   try {
     // If success, send the new sticker
-    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
+    const newSticker = (await ctx.api.getStickerSet(packName)).stickers.at(-1);
     if (newSticker) {
-      await bot.sendSticker(msg.chat.id, newSticker.file_id);
+      await ctx.replyWithSticker(newSticker.file_id);
     }
   } catch (error) {
     console.error(error);
   }
 };
 
-export const createStickerController = async (
-  msg: TelegramBot.Message,
-  bot: TelegramBot,
-) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from?.id;
-  const caption = msg.caption?.split(" ") ?? [];
+export const createStickerController = async (ctx: Context) => {
+  const chatId = ctx.chat?.id;
+  const userId = ctx.from?.id;
+  const caption = ctx.message?.caption?.split(" ") ?? [];
+  const msg = ctx.message;
 
-  // User ID must be available
-  if (!userId) return;
+  if (!userId || !chatId || !msg) return;
 
   // Only react in groups
   if (!isGroup(msg)) {
@@ -83,68 +72,65 @@ export const createStickerController = async (
 
     try {
       await createStickerFromID(
-        bot,
+        ctx.api,
         fileId,
         packName,
         chatId,
-        getEmoji(caption) ?? "🖼️",
+        getEmoji(caption) ?? ["🖼️"],
       );
-      await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
-      const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
+      await ctx.reply("✅ Sticker added to the pack!");
+      const newSticker = (await ctx.api.getStickerSet(packName)).stickers.at(
+        -1,
+      );
       if (newSticker) {
-        await bot.sendSticker(chatId, newSticker.file_id);
+        await ctx.replyWithSticker(newSticker.file_id);
       }
     } catch (error) {
       console.error(error);
-      await bot.sendMessage(
-        chatId,
+      await ctx.reply(
         "❌ Failed to add the sticker. Make sure the bot has permission.",
       );
     }
   }
 };
 
-export const textStickerController = async (
-  bot: TelegramBot,
-  originalMessage: Message,
-) => {
-  const message = originalMessage.reply_to_message;
-  const caption = originalMessage.text?.split(" ") ?? [];
+export const textStickerController = async (ctx: Context) => {
+  const message = ctx.message?.reply_to_message;
+  const caption = ctx.message?.text?.split(" ") ?? [];
   if (!message) {
     return;
   }
 
   const content = message.text;
   const { senderID, name } = senderInfo(message);
+  const chatId = ctx.chat?.id;
 
-  if (!content || !name) {
+  if (!content || !name || !chatId) {
     return;
   }
-  const chatId = originalMessage.chat.id;
   const packName = stickerPackName(chatId);
   const time = message.date;
 
   try {
     const profilePic = senderID
-      ? await getProfilePicture(bot, senderID)
+      ? await getProfilePicture(ctx.api, senderID)
       : undefined;
     const image = await createChatBubble(content, name, time, profilePic);
     await createStickerFromBuffer(
-      bot,
+      ctx.api,
       Buffer.from(image),
       packName,
       chatId,
-      getEmoji(caption) ?? "🖼️",
+      getEmoji(caption) ?? ["🖼️"],
     );
-    await bot.sendMessage(chatId, "✅ Sticker added to the pack!");
-    const newSticker = (await bot.getStickerSet(packName)).stickers.at(-1);
+    await ctx.reply("✅ Sticker added to the pack!");
+    const newSticker = (await ctx.api.getStickerSet(packName)).stickers.at(-1);
     if (newSticker) {
-      await bot.sendSticker(chatId, newSticker.file_id);
+      await ctx.replyWithSticker(newSticker.file_id);
     }
   } catch (error) {
     console.error(error);
-    await bot.sendMessage(
-      chatId,
+    await ctx.reply(
       "❌ Failed to add the sticker. Make sure the bot has permission.",
     );
   }
