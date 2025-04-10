@@ -24,12 +24,12 @@ bot.command("groupID", (ctx) => {
   }
 });
 
-bot.hears(/^#stiku/, (ctx) => {
+bot.on(":text").hears(/^#stiku/, (ctx) => {
   textStickerController(ctx);
 });
 
-// Listener for stickers/images
-bot.on(":photo", async (ctx) => {
+// Listener for images
+bot.on(":photo").hears(/^#stiku/, (ctx) => {
   createStickerController(ctx);
 });
 
