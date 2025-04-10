@@ -36,17 +36,14 @@ export const isUserAdmin = async (
 export const processImage = async (
   fileId: string,
   api: Api,
-): Promise<string> => {
+): Promise<ArrayBuffer> => {
   const fileLink = getFileLink(await api.getFile(fileId));
   const response = await axios({ url: fileLink, responseType: "arraybuffer" });
-  const filePath = `./sticker.webp`;
 
-  await sharp(response.data)
+  return sharp(response.data)
     .resize(512, 512, { fit: "inside" })
     .webp({ lossless: true })
-    .toFile(filePath);
-
-  return filePath;
+    .toBuffer();
 };
 
 export const getEmoji = (caption: string[]): string[] | undefined => {

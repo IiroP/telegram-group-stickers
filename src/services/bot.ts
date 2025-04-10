@@ -9,11 +9,11 @@ export const createStickerFromID = async (
   chatID: number,
   emojis: string[],
 ) => {
-  const stickerPath = await processImage(fileId, api);
+  const stickerBuffer = Buffer.from(await processImage(fileId, api));
   const trimmedChatId = trimChatID(chatID);
   const owner = await db.getData(`/groups/${trimmedChatId}`);
   await api.addStickerToSet(owner, pack, {
-    sticker: new InputFile(stickerPath),
+    sticker: new InputFile(stickerBuffer),
     emoji_list: emojis,
     format: "static",
   });
