@@ -6,7 +6,7 @@ import {
   StaticCanvas,
   Textbox,
 } from "fabric/node";
-import { randomAccent } from "../utils/colors";
+import { getAccent, randomAccent } from "../utils/colors";
 import { getTime } from "../utils/utils";
 import { dataUriToBuffer } from "data-uri-to-buffer";
 import sharp from "sharp";
@@ -15,7 +15,7 @@ export const createChatBubble = async (
   text: string,
   name: string,
   time: number,
-  picture?: ArrayBuffer,
+  profileTheme?: { photo?: ArrayBuffer; accent: number },
 ) => {
   const profilePicRadius = 30;
   const padding = 5;
@@ -23,7 +23,9 @@ export const createChatBubble = async (
   const fontFamily = "Roboto";
   const fullWidth = text.length > 50 ? 512 : 300;
   const boxWidth = fullWidth - textBoxStart - padding;
-  const accent = randomAccent();
+  const accent = profileTheme?.accent
+    ? getAccent(profileTheme.accent)
+    : randomAccent();
 
   const nameBox = new FabricText(name, {
     fontSize: 18,
@@ -63,6 +65,7 @@ export const createChatBubble = async (
     backgroundColor: "rgba(0,0,0,0)",
   });
 
+  const picture = profileTheme?.photo;
   if (picture) {
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;

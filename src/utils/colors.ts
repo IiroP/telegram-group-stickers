@@ -9,13 +9,13 @@ export const profileAccents = {
 };
 
 export const accentColorsList = [
-  "#BA5650", // red
-  "#C27C3E", // orange
-  "#956AC8", // violet
-  "#49A355", // green
-  "#3E97AD", // cyan
-  "#5A8FBB", // blue
-  "#B85378", // pink
+  "#f76169", // red
+  "#f8a357", // orange
+  "#b48bf2", // violet
+  "#85de85", // green
+  "#62d4e3", // cyan
+  "#65bdf3", // blue
+  "#f85694", // pink
   "#7F8B95", // grey
   // The following colors should be multicolor
   "#C9565D",

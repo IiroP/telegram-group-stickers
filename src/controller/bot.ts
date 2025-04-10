@@ -112,10 +112,10 @@ export const textStickerController = async (ctx: Context) => {
   const time = message.date;
 
   try {
-    const profilePic = senderID
+    const profileTheme = senderID
       ? await getProfilePicture(ctx.api, senderID)
       : undefined;
-    const image = await createChatBubble(content, name, time, profilePic);
+    const image = await createChatBubble(content, name, time, profileTheme);
     await createStickerFromBuffer(
       ctx.api,
       Buffer.from(image),

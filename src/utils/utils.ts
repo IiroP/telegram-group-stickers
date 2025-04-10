@@ -107,21 +107,25 @@ export const getFileLink = (file: File): string => {
  *
  * @param bot Telegram Bot
  * @param user user id
- * @returns ArrayBuffer of the profile picture (or undefined)
+ * @returns ArrayBuffer of the profile picture and accent color id, or undefined
  */
 export const getProfilePicture = async (
   api: Api,
   user: number,
-): Promise<ArrayBuffer | undefined> => {
+): Promise<{ photo?: ArrayBuffer; accent: number } | undefined> => {
   try {
     const chat = await api.getChat(user);
+    const accent = chat.accent_color_id;
     const fileID = chat.photo?.small_file_id;
     if (!fileID) {
-      return;
+      return { accent };
     }
     const link = getFileLink(await api.getFile(fileID));
     const response = await axios({ url: link, responseType: "arraybuffer" });
-    return response.data;
+    return {
+      photo: response.data,
+      accent,
+    };
   } catch {
     // Bot cannot fetch profile picture of group it's not in
     console.log("Bot cannot fetch profile picture of group it's not in");
