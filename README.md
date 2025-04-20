@@ -8,7 +8,8 @@ _This part is subject to change_
 
 1. Group admin/owner adds the bot into the group, and sends command `/createPack`
    - This creates the initial Sticker pack with Hello World sticker
-2. After the pack has been created, all images sent to the group with `#stiku` as the caption are added to the pack
+2. After the pack has been created, all images sent to the group with `#stiku (<emojis>)` as the caption are added to the pack
+   - Replying to existing image/sticker with `#stiku (<emojis>)` also adds it to the pack
 
 The user who initially ran the `/createPack` command owns the sticker pack and can also manually edit the contents
 
