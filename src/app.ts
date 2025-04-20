@@ -35,4 +35,4 @@ bot.on(":photo").hears(/^#stiku/, (ctx) => {
 
 // Start the bot
 bot.start();
-console.log("Started the bot");
+console.info("Started the bot");

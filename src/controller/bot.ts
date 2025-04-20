@@ -13,6 +13,7 @@ import {
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
 import { Context } from "grammy";
+import { Message } from "grammy/types";
 
 export const createPackController = async (ctx: Context) => {
   const msg = ctx.message;
@@ -51,16 +52,24 @@ export const createPackController = async (ctx: Context) => {
   }
 };
 
-export const createStickerController = async (ctx: Context) => {
+export const createStickerController = async (
+  ctx: Context,
+  replyMessage?: Message,
+) => {
   const chatId = ctx.chat?.id;
   const userId = ctx.from?.id;
-  const caption = ctx.message?.caption?.split(" ") ?? [];
-  const msg = ctx.message;
+  const caption =
+    ctx.message?.caption?.split(" ") ?? ctx.message?.text?.split(" ") ?? [];
+  const msg = replyMessage ?? ctx.message;
 
-  if (!userId || !chatId || !msg) return;
+  if (!userId || !chatId || !msg || !ctx.message) {
+    console.error("Missing userId, chatId, or message");
+    return;
+  }
 
   // Only react in groups
-  if (!isGroup(msg)) {
+  if (!isGroup(ctx.message)) {
+    console.error("Not a group");
     return;
   }
 
@@ -68,7 +77,10 @@ export const createStickerController = async (ctx: Context) => {
 
   if (caption.indexOf("#stiku") >= 0) {
     const fileId = msg.photo?.pop()?.file_id || msg.sticker?.file_id;
-    if (!fileId) return;
+    if (!fileId) {
+      console.error("No fileId found");
+      return;
+    }
 
     try {
       await createStickerFromID(
@@ -96,6 +108,11 @@ export const createStickerController = async (ctx: Context) => {
 
 export const textStickerController = async (ctx: Context) => {
   const message = ctx.message?.reply_to_message;
+  if (message?.photo || message?.sticker) {
+    await createStickerController(ctx, message);
+    return;
+  }
+
   const caption = ctx.message?.text?.split(" ") ?? [];
   if (!message) {
     return;
