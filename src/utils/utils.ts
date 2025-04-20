@@ -50,7 +50,11 @@ export const getEmoji = (caption: string[]): string[] | undefined => {
   const regex = emojiRegex();
   const emojis: string[] = caption
     .filter((word) => regex.test(word))
-    .slice(0, 1);
+    .slice(0, 1) // take only first emojis
+    .flatMap((word) =>
+      [...new Intl.Segmenter().segment(word)].map((x) => x.segment),
+    )
+    .slice(0, 20); // take max 20 emojis;
   return emojis.length >= 1 ? emojis : undefined;
 };
 

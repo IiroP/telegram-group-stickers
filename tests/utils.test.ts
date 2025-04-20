@@ -20,11 +20,16 @@ describe("getEmoji", () => {
 
   test("support multiple consecutive emojis", () => {
     const caption = ["test", "👋🤔", "😄"];
-    assert.deepStrictEqual(getEmoji(caption), ["👋🤔"]);
+    assert.deepStrictEqual(getEmoji(caption), ["👋", "🤔"]);
   });
 
   test("returns undefined if no emoji", () => {
     const caption = ["No", "emoji", "here"];
     assert.strictEqual(getEmoji(caption), undefined);
+  });
+
+  test("takes max 20 emojis", () => {
+    const caption = ["👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋👋"];
+    assert.deepStrictEqual(getEmoji(caption)?.length, 20);
   });
 });
