@@ -1,4 +1,5 @@
 import {
+  adminTitle,
   getEmoji,
   getProfilePicture,
   isGroup,
@@ -121,6 +122,7 @@ export const textStickerController = async (ctx: Context) => {
   const content = message.text;
   const { senderID, name } = senderInfo(message);
   const chatId = ctx.chat?.id;
+  const title = await adminTitle(ctx, senderID);
 
   if (!content || !name || !chatId) {
     return;
@@ -132,7 +134,13 @@ export const textStickerController = async (ctx: Context) => {
     const profileTheme = senderID
       ? await getProfilePicture(ctx.api, senderID)
       : undefined;
-    const image = await createChatBubble(content, name, time, profileTheme);
+    const image = await createChatBubble(
+      content,
+      name,
+      time,
+      profileTheme,
+      title,
+    );
     await createStickerFromBuffer(
       ctx.api,
       Buffer.from(image),

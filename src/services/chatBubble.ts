@@ -16,12 +16,18 @@ export const createChatBubble = async (
   name: string,
   time: number,
   profileTheme?: { photo?: ArrayBuffer; accent: number },
+  adminTitle?: string,
 ) => {
   const profilePicRadius = 30;
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
   const fontFamily = "Roboto";
-  const fullWidth = text.length > 50 ? 512 : 300;
+  const fullWidth =
+    text.length > 50
+      ? 512
+      : name.length + (adminTitle?.length ?? 0) > 25
+        ? 420
+        : 300;
   const boxWidth = fullWidth - textBoxStart - padding;
   const accent = profileTheme?.accent
     ? getAccent(profileTheme.accent)
@@ -121,6 +127,20 @@ export const createChatBubble = async (
   canvas.add(box);
   canvas.add(nameBox);
   canvas.add(clock);
+
+  if (adminTitle) {
+    const adminBox = new FabricText(adminTitle, {
+      fontSize: 18,
+      textAlign: "right",
+      fill: "grey",
+      fontFamily: fontFamily,
+    });
+    adminBox.set({
+      left: fullWidth - adminBox.width - 3 * padding,
+      top: 3 * padding,
+    });
+    canvas.add(adminBox);
+  }
 
   canvas.renderAll();
   const data = canvas.toDataURL({
