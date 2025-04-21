@@ -172,3 +172,23 @@ export const senderInfo = (
     name: `${message.from?.first_name ?? ""} ${message.from?.last_name ?? ""}`,
   };
 };
+
+export const adminTitle = async (
+  ctx: Context,
+  userID?: number,
+): Promise<string | undefined> => {
+  if (!userID) {
+    return undefined;
+  }
+  try {
+    const info = await ctx.getChatMember(userID);
+    if (info.status === "administrator" || info.status === "creator") {
+      const fallback = info.status === "creator" ? "owner" : "admin";
+      return info.custom_title ?? fallback;
+    }
+    return undefined;
+  } catch {
+    console.error("Error fetching admin title");
+    return undefined;
+  }
+};
