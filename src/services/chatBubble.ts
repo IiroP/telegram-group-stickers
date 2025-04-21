@@ -22,13 +22,6 @@ export const createChatBubble = async (
   const padding = 5;
   const textBoxStart = 2 * profilePicRadius + 3 * padding;
   const fontFamily = "Roboto";
-  const fullWidth =
-    text.length > 50
-      ? 512
-      : name.length + (adminTitle?.length ?? 0) > 25
-        ? 420
-        : 300;
-  const boxWidth = fullWidth - textBoxStart - padding;
   const accent = profileTheme?.accent
     ? getAccent(profileTheme.accent)
     : randomAccent();
@@ -36,15 +29,22 @@ export const createChatBubble = async (
   const nameBox = new FabricText(name, {
     fontSize: 18,
     fill: accent,
-    top: 3 * padding,
-    left: textBoxStart + 2 * padding,
     fontFamily: fontFamily,
     fontStyle: "bold",
   });
 
+  const adminBox = new FabricText(adminTitle ?? "", {
+    fontSize: 18,
+    textAlign: "right",
+    fill: "grey",
+    fontFamily: fontFamily,
+  });
+
+  const titleBarWidth = nameBox.width + adminBox.width + 7 * padding;
+  const fullWidth = text.length > 50 ? 512 : titleBarWidth + textBoxStart;
+  const boxWidth = fullWidth - textBoxStart - padding;
+
   const box = new Textbox(text, {
-    left: textBoxStart + 2 * padding,
-    top: 4 * padding + nameBox.height,
     width: boxWidth - 3 * padding,
     fontSize: 18,
     fill: "white",
@@ -55,13 +55,26 @@ export const createChatBubble = async (
   });
 
   const bubbleRect = new Rect({
-    left: textBoxStart,
-    top: padding,
     width: boxWidth,
     height: box.height + nameBox.height + 25 + 4 * padding,
     rx: 20,
     ry: 20,
     fill: "#182533",
+  });
+
+  nameBox.set({
+    top: 3 * padding,
+    left: textBoxStart + 2 * padding,
+  });
+
+  box.set({
+    left: textBoxStart + 2 * padding,
+    top: 4 * padding + nameBox.height,
+  });
+
+  bubbleRect.set({
+    left: textBoxStart,
+    top: padding,
   });
 
   const totalHeight = bubbleRect.height + 2 * padding;
@@ -129,12 +142,6 @@ export const createChatBubble = async (
   canvas.add(clock);
 
   if (adminTitle) {
-    const adminBox = new FabricText(adminTitle, {
-      fontSize: 18,
-      textAlign: "right",
-      fill: "grey",
-      fontFamily: fontFamily,
-    });
     adminBox.set({
       left: fullWidth - adminBox.width - 3 * padding,
       top: 3 * padding,
