@@ -41,7 +41,8 @@ export const createChatBubble = async (
   });
 
   const titleBarWidth = nameBox.width + adminBox.width + 7 * padding;
-  const fullWidth = text.length > 50 ? 512 : titleBarWidth + textBoxStart;
+  const fullWidth =
+    text.length > 50 ? 512 : Math.max(300, titleBarWidth + textBoxStart);
   const boxWidth = fullWidth - textBoxStart - padding;
 
   const box = new Textbox(text, {
