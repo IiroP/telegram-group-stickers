@@ -11,6 +11,24 @@ import { getTime } from "../utils/utils";
 import { dataUriToBuffer } from "data-uri-to-buffer";
 import sharp from "sharp";
 
+type CustomContext = CanvasRenderingContext2D & { textDrawingMode: string };
+
+class EmojiText extends FabricText {
+  _render(ctx: CustomContext) {
+    ctx.textDrawingMode = "glyph";
+    super._render(ctx);
+    ctx.textDrawingMode = "path";
+  }
+}
+
+class EmojiTextBox extends Textbox {
+  _render(ctx: CustomContext) {
+    ctx.textDrawingMode = "glyph";
+    super._render(ctx);
+    ctx.textDrawingMode = "path";
+  }
+}
+
 export const createChatBubble = async (
   text: string,
   name: string,
@@ -26,14 +44,14 @@ export const createChatBubble = async (
     ? getAccent(profileTheme.accent)
     : randomAccent();
 
-  const nameBox = new FabricText(name, {
+  const nameBox = new EmojiText(name, {
     fontSize: 18,
     fill: accent,
     fontFamily: fontFamily,
     fontStyle: "bold",
   });
 
-  const adminBox = new FabricText(adminTitle ?? "", {
+  const adminBox = new EmojiText(adminTitle ?? "", {
     fontSize: 18,
     textAlign: "right",
     fill: "grey",
@@ -45,13 +63,12 @@ export const createChatBubble = async (
     text.length > 50 ? 512 : Math.max(300, titleBarWidth + textBoxStart);
   const boxWidth = fullWidth - textBoxStart - padding;
 
-  const box = new Textbox(text, {
+  const box = new EmojiTextBox(text, {
     width: boxWidth - 3 * padding,
     fontSize: 18,
     fill: "white",
     backgroundColor: "#182533",
     padding: 10,
-    cornerRadius: 15,
     fontFamily: fontFamily,
   });
 
