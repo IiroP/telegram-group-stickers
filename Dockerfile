@@ -12,8 +12,11 @@ RUN apk add --update --no-cache build-base \
 	fontconfig \
 	freetype \
 	ttf-freefont \
-	font-roboto \
-	font-noto-emoji
+#	font-noto-emoji \
+	font-roboto
+
+ADD https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf /usr/share/fonts/AppleColorEmoji.ttf
+RUN fc-cache -f -v
 
 # Set the working directory inside the container
 WORKDIR /app
