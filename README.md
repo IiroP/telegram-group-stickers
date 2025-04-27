@@ -34,6 +34,11 @@ You can also use Docker to run the application, build with `docker compose build
 
 If your system is not directly supported by [node-canvas](https://github.com/Automattic/node-canvas), check what system packages you have to install before running this app.
 
+## FAQ
+
+- _Why are emojis not rendered? / Why are emojis rendered using wrong font?_
+  - `node-canvas` uses system emoji font to render emojis. Use Docker if you need other emoji version.
+
 ## Contributing
 
 Feel free to submit PR:s to this repo. All code should be formatted with `pnpm format`.
