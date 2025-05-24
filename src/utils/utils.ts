@@ -83,6 +83,10 @@ export const isGroup = (msg: Message): boolean => {
   return msg.chat.type == "group" || msg.chat.type === "supergroup";
 };
 
+export const isPrivate = (msg: Message): boolean => {
+  return msg.chat.type === "private";
+};
+
 /**
  * Parse Telegram message timestamp to HH:MM format
  *

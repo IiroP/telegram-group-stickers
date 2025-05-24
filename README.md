@@ -7,6 +7,7 @@ This bot can be used to create collaborative sticker packs for Telegram groups. 
 _This part is subject to change_
 
 1. Group admin/owner adds the bot into the group, and sends command `/createPack`
+   - Before this, user who wishes to create pack has to authorize the bot by sending `/start` to the bot with direct message (not in a group).
    - This creates the initial Sticker pack with Hello World sticker
 2. After the pack has been created, all images sent to the group with `#stiku (<emojis>)` as the caption are added to the pack
    - Replying to existing image/sticker with `#stiku (<emojis>)` also adds it to the pack
