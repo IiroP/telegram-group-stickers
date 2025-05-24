@@ -1,9 +1,12 @@
 .env
 node_modules/
 dist/
+coverage
 
 sticker.webp
 sticker.png
 database.json
 
 *.zip
+
+.vscode

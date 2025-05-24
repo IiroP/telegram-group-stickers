@@ -3,6 +3,7 @@ import {
   getEmoji,
   getProfilePicture,
   isGroup,
+  isPrivate,
   isUserAdmin,
   senderInfo,
   stickerPackName,
@@ -13,13 +14,19 @@ import {
   createStickerPack,
 } from "../services/bot";
 import { createChatBubble } from "../services/chatBubble";
-import { Context } from "grammy";
+import { Context, GrammyError } from "grammy";
 import { Message } from "grammy/types";
+import { DataError } from "node-json-db";
 
 export const createPackController = async (ctx: Context) => {
   const msg = ctx.message;
   // Only react in groups
   if (!msg || !isGroup(msg)) {
+    if (msg && isPrivate(msg)) {
+      await ctx.reply(
+        "This command can only be used in groups. Please use it in a group chat.",
+      );
+    }
     return;
   }
   // Only admin user can create the pack
@@ -39,6 +46,14 @@ export const createPackController = async (ctx: Context) => {
     await ctx.reply(`Created pack: https://t.me/addstickers/${packName}`);
   } catch (error) {
     console.error(error);
+    if (error instanceof GrammyError) {
+      if (error.description.includes("PEER_ID_INVALID")) {
+        await ctx.reply(
+          "You haven't authorized the bot yet. Send start command to the bot with DM to authorize it.",
+        );
+        return;
+      }
+    }
     await ctx.reply("Failed to create pack");
     return;
   }
@@ -100,6 +115,12 @@ export const createStickerController = async (
       }
     } catch (error) {
       console.error(error);
+      if (error instanceof DataError) {
+        await ctx.reply(
+          "Pack not found. Please create a pack first using /createPack.",
+        );
+        return;
+      }
       await ctx.reply(
         "❌ Failed to add the sticker. Make sure the bot has permission.",
       );
