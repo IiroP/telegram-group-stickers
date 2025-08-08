@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@grammyjs/auto-thread':
+        specifier: github:grammyjs/auto-thread
+        version: https://codeload.github.com/grammyjs/auto-thread/tar.gz/3beb99e4d5e9228d87bb40149d35c98fe8ca0344(grammy@1.35.1)
       axios:
         specifier: ^1.8.3
         version: 1.8.3
@@ -259,6 +262,13 @@ packages:
   '@eslint/plugin-kit@0.2.7':
     resolution: {integrity: sha512-JubJ5B2pJ4k4yGxaNLdbjrnk9d/iDz6/q8wOilpIowd6PJPgaxCuHBnBszq7Ce2TyMrywm5r4PnKm6V3iiZF+g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@grammyjs/auto-thread@https://codeload.github.com/grammyjs/auto-thread/tar.gz/3beb99e4d5e9228d87bb40149d35c98fe8ca0344':
+    resolution: {tarball: https://codeload.github.com/grammyjs/auto-thread/tar.gz/3beb99e4d5e9228d87bb40149d35c98fe8ca0344}
+    version: 2.0.1
+    engines: {node: ^12.20.0 || >=14.13.1}
+    peerDependencies:
+      grammy: ^1.12.0
 
   '@grammyjs/types@3.19.0':
     resolution: {integrity: sha512-N0MS+RJG+AGSNuka1GWVj88oyK1oti4I0eQq6jGo4hic3P9MwFfnHjGQuIExZ3tlJUrZYwC/T7gk4Tu3+guJyg==}
@@ -1975,6 +1985,10 @@ snapshots:
     dependencies:
       '@eslint/core': 0.12.0
       levn: 0.4.1
+
+  '@grammyjs/auto-thread@https://codeload.github.com/grammyjs/auto-thread/tar.gz/3beb99e4d5e9228d87bb40149d35c98fe8ca0344(grammy@1.35.1)':
+    dependencies:
+      grammy: 1.35.1
 
   '@grammyjs/types@3.19.0': {}
 
