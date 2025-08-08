@@ -6,8 +6,12 @@ import {
   textStickerController,
 } from "./controller/bot";
 import { isGroup, isPrivate } from "./utils/utils";
+import { autoThread } from "@grammyjs/auto-thread";
 
 const bot = new Bot(TOKEN);
+
+// Better support for Topics
+bot.use(autoThread());
 
 bot.command("createPack", async (ctx) => {
   createPackController(ctx);
