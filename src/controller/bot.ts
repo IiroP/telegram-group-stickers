@@ -106,12 +106,13 @@ export const createStickerController = async (
         chatId,
         getEmoji(caption) ?? ["🖼️"],
       );
-      await ctx.reply("✅ Sticker added to the pack!");
       const newSticker = (await ctx.api.getStickerSet(packName)).stickers.at(
         -1,
       );
       if (newSticker) {
         await ctx.replyWithSticker(newSticker.file_id);
+      } else {
+        await ctx.reply("❌ Something went wrong when creating the sticker.");
       }
     } catch (error) {
       console.error(error);
@@ -169,10 +170,11 @@ export const textStickerController = async (ctx: Context) => {
       chatId,
       getEmoji(caption) ?? ["🖼️"],
     );
-    await ctx.reply("✅ Sticker added to the pack!");
     const newSticker = (await ctx.api.getStickerSet(packName)).stickers.at(-1);
     if (newSticker) {
       await ctx.replyWithSticker(newSticker.file_id);
+    } else {
+      await ctx.reply("❌ Something went wrong when creating the sticker.");
     }
   } catch (error) {
     console.error(error);
