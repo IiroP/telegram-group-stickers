@@ -141,7 +141,7 @@ export const textStickerController = async (ctx: Context) => {
     return;
   }
 
-  const content = message.text;
+  const content = message.text ?? message.caption;
   const { senderID, name } = senderInfo(message);
   const chatId = ctx.chat?.id;
   const title = await adminTitle(ctx, senderID);
