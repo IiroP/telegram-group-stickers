@@ -3,6 +3,7 @@ import { TOKEN } from "./utils/globals";
 import {
   createPackController,
   createStickerController,
+  packStatus,
   textStickerController,
 } from "./controller/bot";
 import { isGroup, isPrivate } from "./utils/utils";
@@ -15,6 +16,10 @@ bot.use(autoThread());
 
 bot.command("createPack", async (ctx) => {
   createPackController(ctx);
+});
+
+bot.command("packStatus", async (ctx) => {
+  packStatus(ctx);
 });
 
 bot.command("hello", (ctx) => {
