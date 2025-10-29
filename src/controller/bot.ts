@@ -116,16 +116,7 @@ export const createStickerController = async (
         await ctx.reply("❌ Something went wrong when creating the sticker.");
       }
     } catch (error) {
-      console.error(error);
-      if (error instanceof DataError) {
-        await ctx.reply(
-          "Pack not found. Please create a pack first using /createPack.",
-        );
-        return;
-      }
-      await ctx.reply(
-        "❌ Failed to add the sticker. Make sure the bot has permission.",
-      );
+      handleError(ctx, error);
     }
   }
 };
@@ -179,11 +170,26 @@ export const textStickerController = async (ctx: Context) => {
       await ctx.reply("❌ Something went wrong when creating the sticker.");
     }
   } catch (error) {
-    console.error(error);
-    await ctx.reply(
-      "❌ Failed to add the sticker. Make sure the bot has permission.",
-    );
+    handleError(ctx, error);
   }
+};
+
+const handleError = async (ctx: Context, error: unknown) => {
+  console.error(error);
+  // Handle errors from DB
+  if (error instanceof DataError) {
+    await ctx.reply(
+      "Pack not found. Please create a pack first using /createPack.",
+    );
+    return;
+  }
+  // Handle errors from Telegram API
+  if (error instanceof GrammyError) {
+    await ctx.reply(`Something went wrong. Error code: ${error.description}`);
+    return;
+  }
+  // Other errors
+  await ctx.reply("Unknown error, please try again later.");
 };
 
 //TODO: Refactor this file as there is a lot of repeated code
