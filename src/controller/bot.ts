@@ -192,4 +192,33 @@ const handleError = async (ctx: Context, error: unknown) => {
   await ctx.reply("Unknown error, please try again later.");
 };
 
+export const packStatus = async (ctx: Context) => {
+  const msg = ctx.message;
+  // Only react in groups
+  if (!msg || !isGroup(msg)) {
+    if (msg && isPrivate(msg)) {
+      await ctx.reply(
+        "This command can only be used in groups. Please use it in a group chat.",
+      );
+    }
+    return;
+  }
+
+  const chatId = ctx.chat?.id;
+  if (!chatId) {
+    return;
+  }
+
+  // Get pack statistics
+  const packName = stickerPackName(chatId);
+  const stickerSet = await ctx.api.getStickerSet(packName);
+  if (!stickerSet) {
+    return;
+  }
+
+  const totalStickers = stickerSet.stickers.length;
+
+  await ctx.reply(`Stickers: ${totalStickers}/120`);
+};
+
 //TODO: Refactor this file as there is a lot of repeated code
