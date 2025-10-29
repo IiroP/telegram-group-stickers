@@ -5,6 +5,7 @@ import {
   isGroup,
   isPrivate,
   isUserAdmin,
+  messageFromExternalReply,
   senderInfo,
   stickerPackName,
 } from "../utils/utils";
@@ -130,7 +131,8 @@ export const createStickerController = async (
 };
 
 export const textStickerController = async (ctx: Context) => {
-  const message = ctx.message?.reply_to_message;
+  const message =
+    ctx.message?.reply_to_message ?? messageFromExternalReply(ctx.message);
   if (message?.photo || message?.sticker) {
     await createStickerController(ctx, message);
     return;
