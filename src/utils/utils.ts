@@ -36,7 +36,7 @@ export const isUserAdmin = async (
 export const processImage = async (
   fileId: string,
   api: Api,
-): Promise<ArrayBuffer> => {
+): Promise<Buffer<ArrayBufferLike>> => {
   const fileLink = getFileLink(await api.getFile(fileId));
   const response = await axios({ url: fileLink, responseType: "arraybuffer" });
 
@@ -195,4 +195,29 @@ export const adminTitle = async (
     console.error("Error fetching admin title");
     return undefined;
   }
+};
+
+/**
+ * Extract external reply from message
+ */
+export const messageFromExternalReply = (
+  message: Message | undefined,
+): Message | undefined => {
+  if (
+    !message ||
+    !message.external_reply ||
+    !message.quote ||
+    message.quote.is_manual // ignore manual quotes for authenticity
+  ) {
+    return undefined;
+  }
+  const reply = message.external_reply;
+  return {
+    ...reply,
+    date: reply.origin.date,
+    message_id: reply.message_id ?? 0,
+    chat: reply.chat ?? { id: 0, type: "private", first_name: "" },
+    text: message.quote.text,
+    forward_origin: reply.origin,
+  };
 };
