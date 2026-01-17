@@ -10,3 +10,4 @@ database.json
 *.zip
 
 .vscode
+package-lock.json
