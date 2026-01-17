@@ -170,6 +170,13 @@ export const senderInfo = (
         };
     }
   }
+  // Check if message is sent by anonymous admin (sender_chat is set)
+  if (message.sender_chat) {
+    return {
+      senderID: message.sender_chat.id,
+      name: message.sender_chat.title ?? "Unknown",
+    };
+  }
   // Message sent by user
   return {
     senderID: message.from?.id,
