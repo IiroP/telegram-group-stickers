@@ -27,6 +27,10 @@ BOT_NAME=<insert your bot username here>
 3. Build the app with `pnpm build`
 4. Run the app with `pnpm start`
 
+## Testing
+
+For generating stickers from text messages there are manual tests you can run with `pnpm test:manual`. This outputs sticker images to scrips/out directory (gitignored).
+
 ### Docker
 
 You can also use Docker to run the application, build with `docker compose build` and run with `docker compose up`

@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "lint": "eslint",
+    "test:manual": "tsx scripts/manualChatBubble.ts",
     "format": "prettier --ignore-unknown --write .",
     "format:check": "prettier . --check"
   },
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "@grammyjs/auto-thread": "github:grammyjs/auto-thread",
+    "@grammyjs/parse-mode": "2.2.1",
     "axios": "^1.13.1",
     "canvas": "^3.2.0",
     "data-uri-to-buffer": "^6.0.2",
