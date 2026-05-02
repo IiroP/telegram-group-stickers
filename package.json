@@ -23,27 +23,27 @@
   "license": "MIT",
   "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a",
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.4",
     "@types/dotenv": "^8.2.3",
-    "@types/node": "^22.18.13",
-    "eslint": "^9.38.0",
+    "@types/node": "^22.19.17",
+    "eslint": "^9.39.4",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^15.15.0",
-    "prettier": "^3.6.2",
-    "tsx": "^4.20.6",
+    "prettier": "^3.8.3",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2"
+    "typescript-eslint": "^8.59.1"
   },
   "dependencies": {
     "@grammyjs/auto-thread": "github:grammyjs/auto-thread",
     "@grammyjs/parse-mode": "2.2.1",
-    "axios": "^1.13.1",
-    "canvas": "^3.2.0",
+    "axios": "^1.15.2",
+    "canvas": "^3.2.3",
     "data-uri-to-buffer": "^6.0.2",
     "dotenv": "^16.6.1",
     "emoji-regex": "^10.6.0",
-    "fabric": "^6.7.1",
-    "grammy": "^1.38.3",
+    "fabric": "^6.9.1",
+    "grammy": "^1.42.0",
     "node-json-db": "2.3.1",
     "sharp": "^0.33.5"
   }
