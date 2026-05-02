@@ -7,9 +7,10 @@ import {
   Textbox,
 } from "fabric/node";
 import { getAccent, randomAccent } from "../utils/colors";
-import { getTime } from "../utils/utils";
+import { getTime, textFormatting } from "../utils/utils";
 import { dataUriToBuffer } from "data-uri-to-buffer";
 import sharp from "sharp";
+import { MessageEntity } from "grammy/types";
 
 type CustomContext = CanvasRenderingContext2D & { textDrawingMode: string };
 
@@ -35,6 +36,7 @@ export const createChatBubble = async (
   time: number,
   profileTheme?: { photo?: ArrayBuffer; accent: number },
   adminTitle?: string,
+  entities?: MessageEntity[],
 ) => {
   const profilePicRadius = 30;
   const padding = 5;
@@ -70,6 +72,12 @@ export const createChatBubble = async (
     backgroundColor: "#182533",
     padding: 10,
     fontFamily: fontFamily,
+  });
+
+  // Text formatting
+  entities?.forEach((entity) => {
+    const { offset, length, type } = entity;
+    box.setSelectionStyles(textFormatting(type), offset, offset + length);
   });
 
   const bubbleRect = new Rect({

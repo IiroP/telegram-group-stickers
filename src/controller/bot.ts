@@ -135,6 +135,7 @@ export const textStickerController = async (ctx: Context) => {
   }
 
   const content = message.text ?? message.caption;
+  const entities = message.entities ?? message.caption_entities;
   const { senderID, name } = senderInfo(message);
   const chatId = ctx.chat?.id;
   const title = await adminTitle(ctx, senderID);
@@ -155,6 +156,7 @@ export const textStickerController = async (ctx: Context) => {
       time,
       profileTheme,
       title,
+      entities,
     );
     await createStickerFromBuffer(
       ctx.api,

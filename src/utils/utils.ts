@@ -2,8 +2,10 @@ import axios from "axios";
 import sharp from "sharp";
 import { BOT_NAME, TOKEN } from "./globals";
 import emojiRegex from "emoji-regex";
-import { File, Message } from "grammy/types";
+import { File, Message, MessageEntity } from "grammy/types";
 import { Api, Context } from "grammy";
+import { TextStyleDeclaration } from "fabric/node";
+import { profileAccents } from "./colors";
 
 /**
  * Check if user is admin in selected group
@@ -227,4 +229,42 @@ export const messageFromExternalReply = (
     text: message.quote.text,
     forward_origin: reply.origin,
   };
+};
+
+/**
+ * Get text formatting styles based on Telegram message entity type
+ * @param type Message entity type (Telegram)
+ * @returns Fabric text style object
+ */
+export const textFormatting = (
+  type: MessageEntity["type"],
+): TextStyleDeclaration => {
+  switch (type) {
+    case "bold":
+      return { fontWeight: "bold" };
+    case "italic":
+      return { fontStyle: "italic" };
+    case "underline":
+      return { underline: true };
+    case "strikethrough":
+      return { linethrough: true };
+    case "code":
+      return { fontFamily: "monospace" };
+    case "pre":
+      return { fontFamily: "monospace" };
+    case "text_link":
+    case "mention":
+    case "text_mention":
+    case "hashtag":
+    case "cashtag":
+    case "phone_number":
+    case "bot_command":
+    case "url":
+    case "email":
+      return { fill: profileAccents.blue };
+    case "spoiler":
+      return { textBackgroundColor: "white", fill: "white" };
+    default:
+      return {};
+  }
 };
