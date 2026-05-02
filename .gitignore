@@ -11,3 +11,6 @@ database.json
 
 .vscode
 package-lock.json
+
+# Manual test output
+scripts/out/
