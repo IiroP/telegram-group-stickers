@@ -8,7 +8,7 @@
     "dev": "tsx watch src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
-    "lint": "eslint",
+    "lint": "oxlint",
     "test:manual": "tsx scripts/manualChatBubble.ts",
     "format": "prettier --ignore-unknown --write .",
     "format:check": "prettier . --check"
@@ -23,16 +23,13 @@
   "license": "MIT",
   "packageManager": "pnpm@12.21.0+sha512.66fd8278ee28935ce951792d34367ff3af5c432a2756445823029533835b8da529bbe0be5130afd56ed0713fb8789e47bad82d93bd5ae2fe54b15562d6276ef0",
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
     "@types/dotenv": "^8.2.3",
     "@types/node": "^22.20.5",
-    "eslint": "^9.39.5",
-    "eslint-plugin-import": "^2.32.0",
     "globals": "^15.15.0",
+    "oxlint": "^1.93.0",
     "prettier": "^3.10.1",
     "tsx": "^4.23.15",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.72.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@grammyjs/auto-thread": "github:grammyjs/auto-thread",
