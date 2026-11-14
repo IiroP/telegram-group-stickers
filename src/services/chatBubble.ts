@@ -12,6 +12,9 @@ import { dataUriToBuffer } from "data-uri-to-buffer";
 import sharp from "sharp";
 import { MessageEntity } from "grammy/types";
 
+// Fabric 7 defaults to center origin; the layout below positions by top-left.
+const topLeft = { originX: "left", originY: "top" } as const;
+
 type CustomContext = CanvasRenderingContext2D & { textDrawingMode: string };
 
 class EmojiText extends FabricText {
@@ -47,13 +50,15 @@ export const createChatBubble = async (
     : randomAccent();
 
   const nameBox = new EmojiText(name, {
+    ...topLeft,
     fontSize: 18,
     fill: accent,
     fontFamily: fontFamily,
-    fontStyle: "bold",
+    fontWeight: "bold",
   });
 
   const adminBox = new EmojiText(adminTitle ?? "", {
+    ...topLeft,
     fontSize: 18,
     textAlign: "right",
     fill: "grey",
@@ -66,6 +71,7 @@ export const createChatBubble = async (
   const boxWidth = fullWidth - textBoxStart - padding;
 
   const box = new EmojiTextBox(text, {
+    ...topLeft,
     width: boxWidth - 3 * padding,
     fontSize: 18,
     fill: "white",
@@ -81,6 +87,7 @@ export const createChatBubble = async (
   });
 
   const bubbleRect = new Rect({
+    ...topLeft,
     width: boxWidth,
     height: box.height + nameBox.height + 25 + 4 * padding,
     rx: 20,
@@ -115,6 +122,7 @@ export const createChatBubble = async (
     const buf = picture ? Buffer.from(picture) : Buffer.from("");
     const picURL = `data:image/png;base64,${buf.toString("base64")}`;
     const pic = await FabricImage.fromURL(picURL, undefined, {
+      ...topLeft,
       left: padding,
       top: totalHeight - padding - 2 * profilePicRadius,
     });
@@ -135,6 +143,7 @@ export const createChatBubble = async (
   } else {
     // If there is no picture, add a placeholder
     const circle = new Circle({
+      ...topLeft,
       radius: profilePicRadius,
       fill: accent,
       left: padding,
@@ -143,6 +152,7 @@ export const createChatBubble = async (
     canvas.add(circle);
     const letter = Array.from(name)[0].toUpperCase();
     const letterText = new FabricText(letter, {
+      ...topLeft,
       fontSize: 24,
       fill: "white",
       fontFamily: fontFamily,
@@ -155,6 +165,7 @@ export const createChatBubble = async (
   }
 
   const clock = new FabricText(getTime(time), {
+    ...topLeft,
     fontSize: 16,
     fill: "grey",
     fontFamily: fontFamily,

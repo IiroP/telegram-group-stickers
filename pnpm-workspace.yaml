@@ -1,4 +1,5 @@
 allowBuilds:
+  "@grammyjs/auto-thread@https://codeload.github.com/grammyjs/auto-thread/tar.gz/ce246d5c38fab16ae324b0ecd0e72ebacf0e7a24": true
   canvas: true
   esbuild: true
   sharp: true
