@@ -37,6 +37,8 @@ For generating stickers from text messages there are manual tests you can run wi
 
 You can also use Docker to run the application, build with `docker compose build` and run with `docker compose up`
 
+A prebuilt multi-arch (amd64 and arm64) image is published to GitHub Container Registry on every push to `main` once CI passes: `docker pull ghcr.io/IiroP/telegram-group-stickers:latest`
+
 ## Requirements
 
 If your system is not directly supported by [node-canvas](https://github.com/Automattic/node-canvas), check what system packages you have to install before running this app.
