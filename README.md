@@ -14,6 +14,8 @@ _This part is subject to change_
 
 The user who initially ran the `/createPack` command owns the sticker pack and can also manually edit the contents
 
+When the pack is full (120 stickers), a group admin can send `/rotatePack` to create a new pack that the group uses from then on. The admin who ran the command owns the new pack, so they must have authorized the bot first. `/packStatus` shows the fill level of the current pack.
+
 ## How to run the bot?
 
 1. Clone this repository and install dependencies with `pnpm install`
