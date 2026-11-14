@@ -21,30 +21,30 @@
   ],
   "author": "Iiro Poutiainen",
   "license": "MIT",
-  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a",
+  "packageManager": "pnpm@12.21.0+sha512.66fd8278ee28935ce951792d34367ff3af5c432a2756445823029533835b8da529bbe0be5130afd56ed0713fb8789e47bad82d93bd5ae2fe54b15562d6276ef0",
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^9.39.5",
     "@types/dotenv": "^8.2.3",
-    "@types/node": "^22.19.17",
-    "eslint": "^9.39.4",
+    "@types/node": "^22.20.5",
+    "eslint": "^9.39.5",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^15.15.0",
-    "prettier": "^3.8.3",
-    "tsx": "^4.21.0",
+    "prettier": "^3.10.1",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.72.2"
   },
   "dependencies": {
     "@grammyjs/auto-thread": "github:grammyjs/auto-thread",
     "@grammyjs/parse-mode": "2.2.1",
-    "axios": "^1.15.2",
+    "axios": "^1.21.1",
     "canvas": "^3.2.3",
     "data-uri-to-buffer": "^6.0.2",
     "dotenv": "^16.6.1",
     "emoji-regex": "^10.6.0",
-    "fabric": "^6.9.1",
-    "grammy": "^1.42.0",
+    "fabric": "^7.4.0",
+    "grammy": "^1.46.0",
     "node-json-db": "2.3.1",
-    "sharp": "^0.33.5"
+    "sharp": "^0.35.5"
   }
 }
