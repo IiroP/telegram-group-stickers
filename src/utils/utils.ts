@@ -1,6 +1,6 @@
 import axios from "axios";
 import sharp from "sharp";
-import { BOT_NAME, TOKEN } from "./globals";
+import { BOT_NAME, TOKEN, db } from "./globals";
 import emojiRegex from "emoji-regex";
 import { File, Message, MessageEntity } from "grammy/types";
 import { Api, Context } from "grammy";
@@ -60,15 +60,40 @@ export const getEmoji = (caption: string[]): string[] | undefined => {
   return emojis.length >= 1 ? emojis : undefined;
 };
 
+export const MAX_STICKERS_PER_PACK = 120;
+
 /**
  * Generates sticker pack name based on group ID
  *
  * @param group Group ID as it comes from API
+ * @param index Pack number within the group, the first pack has no number in its name
  * @returns Sticker pack name
  */
-export const stickerPackName = (group: number): string => {
+export const stickerPackName = (group: number, index = 1): string => {
   const trimmedID = trimChatID(group);
-  return `s_${trimmedID}_by_${BOT_NAME}`;
+  const suffix = index > 1 ? `_${index}` : "";
+  return `s_${trimmedID}${suffix}_by_${BOT_NAME}`;
+};
+
+export interface ActivePack {
+  name: string;
+  owner: number;
+  index: number;
+}
+
+/**
+ * Get the pack currently used by the group. Groups without a rotated pack use the legacy first pack.
+ *
+ * @param chatID Group ID as it comes from API
+ * @throws DataError if the group has no pack
+ */
+export const getActivePack = async (chatID: number): Promise<ActivePack> => {
+  const trimmedID = trimChatID(chatID);
+  if (await db.exists(`/packs/${trimmedID}`)) {
+    return db.getObject<ActivePack>(`/packs/${trimmedID}`);
+  }
+  const owner = await db.getData(`/groups/${trimmedID}`);
+  return { name: stickerPackName(chatID), owner, index: 1 };
 };
 
 /**

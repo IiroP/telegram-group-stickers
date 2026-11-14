@@ -4,6 +4,7 @@ import {
   createPackController,
   createStickerController,
   packStatus,
+  rotatePackController,
   textStickerController,
 } from "./controller/bot";
 import { isGroup, isPrivate } from "./utils/utils";
@@ -20,6 +21,10 @@ bot.command("createPack", async (ctx) => {
 
 bot.command("packStatus", async (ctx) => {
   packStatus(ctx);
+});
+
+bot.command("rotatePack", async (ctx) => {
+  rotatePackController(ctx);
 });
 
 bot.command("hello", (ctx) => {

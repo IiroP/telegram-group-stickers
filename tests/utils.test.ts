@@ -1,7 +1,21 @@
 import assert from "node:assert";
 import { test, describe } from "node:test";
-import { getEmoji, senderInfo } from "../src/utils/utils";
+import { getEmoji, senderInfo, stickerPackName } from "../src/utils/utils";
 import { Message } from "grammy/types";
+
+describe("stickerPackName", () => {
+  test("first pack has no index", () => {
+    assert.match(stickerPackName(-1002185364540), /^s_1002185364540_by_/);
+  });
+
+  test("later packs include the index", () => {
+    assert.match(stickerPackName(-1002185364540, 2), /^s_1002185364540_2_by_/);
+  });
+
+  test("has no consecutive underscores before the bot suffix", () => {
+    assert.doesNotMatch(stickerPackName(-1002185364540, 12), /__/);
+  });
+});
 
 describe("getEmoji", () => {
   test("correctly extracts first emoji", () => {
